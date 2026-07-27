@@ -160,7 +160,7 @@ export default async function Page() {
                     if (item.Category === '写真' || item.Category === 'インスタ') icon = '📷';
                     
                     return (
-                      <div key={`${loop}-${idx}`} className="activity-card" onClick={() => window.open(item.URL, '_blank')}>
+                      <a key={`${loop}-${idx}`} href={item.URL || '#'} target="_blank" rel="noreferrer" className="activity-card" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                         <div className="activity-thumb">
                           {item.Thumbnail ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
@@ -174,7 +174,7 @@ export default async function Page() {
                           <span className="activity-category cat-photo" style={{ marginLeft: '10px' }}>{icon} {item.Category}</span>
                           <h4>{item.Title && item.Title.length > 40 ? item.Title.substring(0, 40) + '...' : item.Title}</h4>
                         </div>
-                      </div>
+                      </a>
                     );
                   })}
                 </React.Fragment>
