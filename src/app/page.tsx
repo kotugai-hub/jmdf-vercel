@@ -56,8 +56,11 @@ export default async function Page() {
     return [];
   };
 
-  // Mosaic images for hero background (repeat galleryImages twice)
-  const mosaicImages = [...galleryImages, ...galleryImages];
+  // Mosaic images for hero background (6 loops = ~210 images to fill grid seamlessly without gaps)
+  const mosaicImages = [
+    ...galleryImages, ...galleryImages, ...galleryImages,
+    ...galleryImages, ...galleryImages, ...galleryImages
+  ];
   const marqueeGroup1 = galleryImages.filter((_, i) => i % 2 === 0);
   const marqueeGroup2 = galleryImages.filter((_, i) => i % 2 !== 0);
 
@@ -89,14 +92,14 @@ export default async function Page() {
 
       <main>
         {/* Section 1: Hero Mosaic Background (GAS Top Background) */}
-        <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '450px', background: 'var(--bg-dark)' }}>
+        <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '450px', background: '#000000' }}>
           <div className="hero-mosaic-bg" id="hero-mosaic-bg">
             {mosaicImages.map((src, idx) => (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img key={idx} src={src} alt="メダカ" loading="lazy" />
             ))}
           </div>
-          <div className="hero-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.45)', zIndex: 1 }}></div>
+          <div className="hero-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.25)', zIndex: 1 }}></div>
           <div className="hero-content" style={{ position: 'relative', zIndex: 2 }}>
             <h1 className="hero-title"><span className="highlight">信頼</span>が文化を育み、<br />文化が<span className="highlight">未来</span>を創る。</h1>
             <p className="hero-subtitle">日本の改良メダカの価値を守り、育て、次の世代へ。</p>
