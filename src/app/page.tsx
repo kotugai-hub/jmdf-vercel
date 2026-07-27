@@ -1,4 +1,5 @@
 import React from 'react';
+import galleryImages from './gallery.json';
 
 async function getData() {
   try {
@@ -55,6 +56,11 @@ export default async function Page() {
     return [];
   };
 
+  // Mosaic images for hero background (repeat galleryImages twice)
+  const mosaicImages = [...galleryImages, ...galleryImages];
+  const marqueeGroup1 = galleryImages.filter((_, i) => i % 2 === 0);
+  const marqueeGroup2 = galleryImages.filter((_, i) => i % 2 !== 0);
+
   return (
     <>
       <header className="header">
@@ -82,10 +88,15 @@ export default async function Page() {
       </header>
 
       <main>
-        {/* Section 1: Hero */}
-        <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '420px' }}>
-          <div className="hero-bg"><div className="water-effect"></div></div>
-          <div className="hero-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.25)', zIndex: 1 }}></div>
+        {/* Section 1: Hero Mosaic Background (GAS Top Background) */}
+        <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '450px', background: 'var(--bg-dark)' }}>
+          <div className="hero-mosaic-bg" id="hero-mosaic-bg">
+            {mosaicImages.map((src, idx) => (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img key={idx} src={src} alt="メダカ" loading="lazy" />
+            ))}
+          </div>
+          <div className="hero-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.45)', zIndex: 1 }}></div>
           <div className="hero-content" style={{ position: 'relative', zIndex: 2 }}>
             <h1 className="hero-title"><span className="highlight">信頼</span>が文化を育み、<br />文化が<span className="highlight">未来</span>を創る。</h1>
             <p className="hero-subtitle">日本の改良メダカの価値を守り、育て、次の世代へ。</p>
@@ -392,23 +403,51 @@ export default async function Page() {
             </div>
           </div>
         </section>
+
+        {/* Section 10: JMDF メダカギャラリー (GAS Marquee) */}
+        <section className="section">
+          <div className="container-fluid">
+            <h2 className="section-title">JMDF メダカギャラリー</h2>
+            <p className="section-lead">全国のプロフェッショナルが育てた至高のメダカたち</p>
+            <div className="photo-marquee-wrapper">
+              <div className="photo-marquee">
+                {[...marqueeGroup1, ...marqueeGroup1].map((src, idx) => (
+                  <div key={idx} className="photo-card">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt="メダカギャラリー" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="photo-marquee-wrapper" style={{ marginTop: '15px' }}>
+              <div className="photo-marquee" style={{ animationDirection: 'reverse' }}>
+                {[...marqueeGroup2, ...marqueeGroup2].map((src, idx) => (
+                  <div key={idx} className="photo-card">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt="メダカギャラリー" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="footer">
         <div className="container">
           <div className="footer-content">
-            <div className="footer-logo">JMDF</div>
-            <p className="footer-desc">ジャパン改良メダカディーラーズフェデレーション<br />日本の改良メダカの価値と信頼を未来へ。</p>
+            <div className="footer-logo">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://files.catbox.moe/j7d5pa.png" alt="JMDF ロゴ" style={{ height: '110px' }} />
+            </div>
+            <p className="footer-desc">一般社団法人ジャパン改良メダカディーラーズフェデレーション</p>
             <div className="footer-links">
-              <a href="#news">お知らせ</a>
-              <a href="#trust">信頼の約束</a>
-              <a href="#members">加盟店</a>
-              <a href="#join">入会案内</a>
-              <a href="#contact">お問合せ</a>
+              <a href="#">特定商取引法に基づく表記</a>
+              <a href="#">プライバシーポリシー</a>
             </div>
           </div>
           <div className="footer-copyright">
-            &copy; 2026 一般社団法人 ジャパン改良メダカディーラーズフェデレーション All Rights Reserved.
+            &copy; 2026 JMDF All Rights Reserved.
           </div>
         </div>
       </footer>
