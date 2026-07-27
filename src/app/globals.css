@@ -40,7 +40,7 @@
         .mobile-menu-btn { display: none; }
         .hero { position: relative; height: 50vh; min-height: 400px; display: flex; align-items: center; justify-content: center; margin-top: 80px; overflow: hidden; }
         .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-light); z-index: -1; }
-        .water-effect { width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(224,247,250,0.85) 100%); animation: slowZoom 20s infinite alternate; }
+        .water-effect { width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 151, 167, 0.4) 100%), url('/hero_medaka.png') center/cover no-repeat; animation: slowZoom 20s infinite alternate; }
 
         @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
         .hero-content { text-align: center; background: rgba(255, 255, 255, 0.9); padding: 40px 60px; border-radius: 20px; box-shadow: var(--box-shadow); backdrop-filter: blur(10px); }

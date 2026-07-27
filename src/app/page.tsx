@@ -14,7 +14,7 @@ async function getData() {
       globalNews: [],
       memberNews: [],
       businessPlan: [],
-      members: [],
+      members: {},
       memberLogos: []
     };
   }
@@ -22,7 +22,7 @@ async function getData() {
 
 export default async function Page() {
   const data = await getData();
-  const { globalNews = [], memberNews = [], businessPlan = [], members = [], memberLogos = [] } = data;
+  const { globalNews = [], memberNews = [], businessPlan = [], members = {}, memberLogos = [] } = data;
 
   const getLogoUrl = (url: string) => {
     if (!url) return '';
@@ -35,7 +35,25 @@ export default async function Page() {
     return url;
   };
 
-  const sanjyoLogos = memberLogos.filter((logo: Record<string, string>) => logo['会員種別'] === '賛助会員');
+  const sanjyoLogos = Array.isArray(memberLogos)
+    ? memberLogos.filter((logo: Record<string, string>) => logo['会員種別'] === '賛助会員')
+    : [];
+
+  const categories = [
+    { name: '正会員', key: '正会員' },
+    { name: '準会員', key: '準会員' },
+    { name: '賛助会員', key: '賛助会員' }
+  ];
+
+  const getCategoryMembers = (key: string): Record<string, string>[] => {
+    if (Array.isArray(members)) {
+      return members.filter((m: Record<string, string>) => (m['Category'] || m['会員種別'] || '正会員') === key);
+    }
+    if (members && typeof members === 'object') {
+      return (members as Record<string, Record<string, string>[]>)[key] || [];
+    }
+    return [];
+  };
 
   return (
     <>
@@ -50,7 +68,7 @@ export default async function Page() {
           <nav className="header-nav">
             <ul className="nav-list">
               <li><a href="#news" className="nav-link">お知らせ</a></li>
-              <li><a href="#trust" className="nav-link">信頼の証</a></li>
+              <li><a href="#trust" className="nav-link">信頼の約束</a></li>
               <li><a href="#members" className="nav-link">加盟店一覧</a></li>
               <li><a href="#join" className="nav-link">賛助会員入会案内</a></li>
             </ul>
@@ -64,15 +82,17 @@ export default async function Page() {
       </header>
 
       <main>
-        <section className="hero" style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-dark)' }}>
-          <div className="hero-mosaic-bg" id="hero-mosaic-bg"></div>
-          <div className="hero-overlay"></div>
-          <div className="hero-content">
-            <h1 className="hero-title"><span className="highlight">信頼</span>が文化を育み、<br />美しい<span className="highlight">未来</span>を創る。</h1>
+        {/* Section 1: Hero */}
+        <section className="hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '420px' }}>
+          <div className="hero-bg"><div className="water-effect"></div></div>
+          <div className="hero-overlay" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.25)', zIndex: 1 }}></div>
+          <div className="hero-content" style={{ position: 'relative', zIndex: 2 }}>
+            <h1 className="hero-title"><span className="highlight">信頼</span>が文化を育み、<br />文化が<span className="highlight">未来</span>を創る。</h1>
             <p className="hero-subtitle">日本の改良メダカの価値を守り、育て、次の世代へ。</p>
           </div>
         </section>
 
+        {/* 会員ロゴスクロール */}
         <div className="logo-marquee-wrapper">
           <div className="logo-marquee">
             {sanjyoLogos.length > 0 && [0, 1].map((loop) => (
@@ -95,6 +115,7 @@ export default async function Page() {
           </div>
         </div>
 
+        {/* Section 2: 事務局からのお知らせ */}
         <section id="news" className="section news-section">
           <div className="container">
             <h2 className="section-title">事務局からのお知らせ</h2>
@@ -114,37 +135,57 @@ export default async function Page() {
                 })
               ) : (
                 <li className="news-item">
-                  <span className="news-date">現在お知らせはありません（データの取得に失敗しているか、設定されていません）</span>
+                  <span className="news-date">現在お知らせはありません</span>
                 </li>
               )}
             </ul>
           </div>
         </section>
 
+        {/* Section 3: 直近の事業計画・スケジュール */}
         <section className="section medaka-news-section bg-light">
           <div className="container">
             <h2 className="section-title">JMDF 直近の事業計画・スケジュール</h2>
             <div className="business-plan-list" style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {businessPlan.length > 0 ? (
-                businessPlan.map((plan: Record<string, string>, idx: number) => {
-                  let badgeClass = 'badge-member';
-                  if (plan.Category === 'イベント') badgeClass = 'badge-event';
-                  else if (plan.Category === '重要') badgeClass = 'badge-important';
-                  return (
-                    <div key={idx} style={{ background: '#fff', borderRadius: '10px', padding: '15px 25px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                      <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text-color)', minWidth: '120px' }}>{plan.Date}</span>
-                      <span className={`news-badge ${badgeClass}`} style={{ minWidth: '100px' }}>{plan.Category}</span>
-                      <span style={{ fontSize: '1.2rem', fontWeight: 500 }}>{plan.Title}</span>
+              {businessPlan && businessPlan.length > 0 ? (
+                businessPlan.map((bp: Record<string, string>, idx: number) => {
+                  const dateStr = bp.DateStr || bp.Date || '';
+                  const eventName = bp.EventName || bp.Title || '';
+                  const detail = bp.Detail || bp.Category || '';
+                  const location = bp.Location || '';
+                  const linkUrl = bp.LinkURL || bp.URL || '';
+
+                  const itemContent = (
+                    <>
+                      <div className="bp-date">📅 {dateStr}</div>
+                      <div className="bp-content">
+                        <h3 className="bp-title">{eventName}</h3>
+                        <p className="bp-desc">{detail}</p>
+                      </div>
+                      {location && <div className="bp-location">📍 {location}</div>}
+                    </>
+                  );
+
+                  return linkUrl ? (
+                    <a key={idx} href={linkUrl} target="_blank" rel="noreferrer" className="business-plan-item" style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {itemContent}
+                    </a>
+                  ) : (
+                    <div key={idx} className="business-plan-item">
+                      {itemContent}
                     </div>
                   );
                 })
               ) : (
-                <p>現在予定されている事業計画はありません</p>
+                <div style={{ textAlign: 'center', padding: '30px', background: '#fff', borderRadius: '8px', color: 'var(--text-light)', fontSize: '1.2rem' }}>
+                  現在予定されている直近のスケジュールはありません。
+                </div>
               )}
             </div>
           </div>
         </section>
 
+        {/* Section 4: 加盟店の最新の活動 */}
         <section className="section activity-section">
           <div className="container-fluid">
             <h2 className="section-title">加盟店の最新の活動</h2>
@@ -152,126 +193,196 @@ export default async function Page() {
           </div>
           <div className="activity-marquee-wrapper">
             <div className="activity-marquee">
-              {memberNews.length > 0 && [0, 1].map((loop) => (
+              {memberNews && memberNews.length > 0 ? [0, 1].map((loop) => (
                 <React.Fragment key={loop}>
                   {memberNews.slice(0, 15).map((item: Record<string, string>, idx: number) => {
                     let icon = '📝';
                     if (item.Category === '動画') icon = '▶️';
                     if (item.Category === '写真' || item.Category === 'インスタ') icon = '📷';
-                    
+
+                    let catClass = 'cat-blog';
+                    if (item.Category === '動画') catClass = 'cat-video';
+                    if (item.Category === '写真' || item.Category === 'インスタ') catClass = 'cat-photo';
+
                     return (
                       <a key={`${loop}-${idx}`} href={item.URL || '#'} target="_blank" rel="noreferrer" className="activity-card" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                         <div className="activity-thumb">
                           {item.Thumbnail ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={item.Thumbnail} alt="サムネイル" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} />
+                            <img src={item.Thumbnail} alt="サムネイル" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
                           ) : (
-                            <i className="fa-solid fa-image"></i>
+                            <span>{icon} {item.Category}</span>
                           )}
                         </div>
                         <div className="activity-info">
+                          <span className={`activity-category ${catClass}`}>{item.Category}</span>
                           <span className="shop-name">{item.ShopName}</span>
-                          <span className="activity-category cat-photo" style={{ marginLeft: '10px' }}>{icon} {item.Category}</span>
-                          <h4>{item.Title && item.Title.length > 40 ? item.Title.substring(0, 40) + '...' : item.Title}</h4>
+                          <h4>{item.Title}</h4>
                         </div>
                       </a>
                     );
                   })}
                 </React.Fragment>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="trust" className="section trust-section bg-light">
-          <div className="container">
-            <h2 className="section-title">JMDFが約束する「安心」</h2>
-            <p className="section-lead">お客様に最高のメダカ体験をお届けするため、私たちは厳しい基準を守ります。</p>
-            <div className="trust-grid">
-              <div className="trust-card">
-                <div className="trust-icon">🧬</div>
-                <h3 className="trust-title">血統の保証</h3>
-                <p>純粋な血統を守り、品種ごとの特徴が正確に現れる個体のみを厳選。お客様が思い描く姿へと成長します。</p>
-              </div>
-              <div className="trust-card">
-                <div className="trust-icon">🦠</div>
-                <h3 className="trust-title">病原菌の徹底排除</h3>
-                <p>出荷前の厳格な健康チェックと薬浴を実施。病気のリスクを最小限に抑え、元気な状態でお届けします。</p>
-              </div>
-              <div className="trust-card">
-                <div className="trust-icon">🌱</div>
-                <h3 className="trust-title">質の高い育成環境</h3>
-                <p>日照時間、水質、栄養バランスなど、メダカにとって最適な環境で大切に育て上げられた個体たちです。</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="members" className="section members-section">
-          <div className="container">
-            <h2 className="section-title">加盟店一覧</h2>
-            <p className="section-lead">厳しい基準をクリアした、全国の信頼できるメダカ専門店です。</p>
-            <div className="members-grid">
-              {members.length > 0 ? (
-                members.map((member: Record<string, string>, idx: number) => {
-                  let logoSrc = member['ロゴ画像URL'];
-                  if (logoSrc && logoSrc.includes('drive.google.com')) {
-                    const match = logoSrc.match(/d\/([a-zA-Z0-9_-]+)/);
-                    if (match && match[1]) {
-                      logoSrc = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
-                    }
-                  }
-                  return (
-                    <div key={idx} className="member-card">
-                      <div className="member-header">
-                        {logoSrc ? (
-                          <div className="member-logo-img" style={{ backgroundImage: `url(${logoSrc})` }}></div>
-                        ) : (
-                          <div className="member-logo-img">{member['屋号']}</div>
-                        )}
-                        <div className="member-header-info">
-                          <h3>{member['屋号']}</h3>
-                          <span className="member-location">📍 {member['所在地(都道府県)']}</span>
-                        </div>
-                      </div>
-                      <div className="member-body">
-                        <p>{member['店舗紹介']}</p>
-                      </div>
-                      <div className="member-footer">
-                        {member['店舗URL'] && (
-                          <a href={member['店舗URL']} target="_blank" rel="noreferrer" className="btn-link">店舗サイトへ</a>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <p>現在登録されている加盟店はありません</p>
+              )) : (
+                <div style={{ padding: '20px', margin: '0 auto', fontSize: '1.2rem' }}>現在、最新の活動データは登録されていません。</div>
               )}
             </div>
           </div>
         </section>
 
-        <section id="join" className="section join-section bg-light">
+        {/* Section 5: 設立のご挨拶 */}
+        <section className="section greeting-section bg-primary-light">
           <div className="container">
-            <div className="text-center mb-5">
-              <h2 className="section-title">賛助会員入会のご案内</h2>
-              <p className="section-lead">JMDFの活動に賛同し、一緒にメダカ文化を育てていただける企業・団体様（賛助会員）を募集しています。</p>
-              <div className="join-grid" style={{ gridTemplateColumns: '1fr', maxWidth: '600px', margin: '0 auto' }}>
-                <div className="join-card">
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '15px' }}>賛助会員<br /><span style={{ fontSize: '1.1rem', color: 'var(--text-light)' }}>（応援していただける企業・団体様）</span></h3>
-                  <p style={{ fontSize: '1.1rem', marginBottom: '25px' }}>私たちの活動を応援してくださる企業様や団体様が対象です。</p>
-                  <a href="https://drive.google.com/file/d/1g1LHSpPzh9i9TASaPgEHyQJC8HwhCkf9/view?usp=drivesdk" id="link-sanjyo" target="_blank" rel="noreferrer" className="btn-primary" style={{ display: 'inline-block', fontSize: '1rem', padding: '12px 25px' }}>募集要項を確認する（PDF）</a>
-                </div>
+            <div className="greeting-content">
+              <h2 className="section-title text-left">設立のご挨拶</h2>
+              <p className="greeting-text">
+                2026年4月1日、私たちは日本の改良メダカ文化を守り、次世代へとつないでいくために「JMDF」を設立いたしました。<br /><br />
+                日本を起源とする改良メダカは、多くの愛好家や専門店の努力により、世界を魅了する美しい文化へと進化を遂げました。しかしその一方で、インターネット販売の普及や環境の変化に伴い、必ずしも買い手と売り手の双方が安心して取引できる仕組みが十分に整っていたとは言えません。<br /><br />
+                私たちJMDFは、改良メダカに真摯に関わるすべての人々が、不安なくこの文化を楽しみ、笑顔で集える場所として、信頼と安心の輪を広げてまいります。
+              </p>
+              <p className="greeting-author">設立時役員代表：岡崎葵メダカ 天野雅弘</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 6: お客さまへの「3つの約束」 */}
+        <section id="trust" className="section trust-section">
+          <div className="container">
+            <h2 className="section-title">お客さまへの「3つの約束」</h2>
+            <p className="section-lead">安心してメダカをご購入いただくため、私たちは以下のルールを守ります。</p>
+
+            <div className="trust-grid">
+              <div className="trust-card">
+                <div className="trust-icon">📷</div>
+                <h3 className="trust-title">① 加工しない<br />「ありのままの写真」</h3>
+                <p className="trust-desc">実物の美しさをそのまま伝えるため、色を極端に濃くするなどの加工は行いません。「届いたメダカが写真と違う」というガッカリを防ぎます。</p>
+              </div>
+              <div className="trust-card">
+                <div className="trust-icon">🐟</div>
+                <h3 className="trust-title">② 品種情報の<br />正確な開示</h3>
+                <p className="trust-desc">改良メダカを販売する際は、その交配過程や表現など、品種に関する正確な情報をお伝えします。</p>
+              </div>
+              <div className="trust-card">
+                <div className="trust-icon">🔰</div>
+                <h3 className="trust-title">③ お店そのものが<br />「安心の目印」</h3>
+                <p className="trust-desc">1匹ずつの証明書ではなく、ルールを守る「JMDF加盟店」という看板自体を信用のおけるブランドとして育てます。</p>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Section 7: 全国の公認加盟店 */}
+        <section id="members" className="section members-section bg-light">
+          <div className="container">
+            <h2 className="section-title">全国の公認加盟店</h2>
+            <p className="section-lead">厳格な基準をクリアし、誠実な取引をお約束する全国のプロショップです。</p>
+
+            {categories.map((cat, cIdx) => {
+              const catMembers = getCategoryMembers(cat.key);
+              return (
+                <React.Fragment key={cat.key}>
+                  <h3 className="member-category-title" style={{ marginTop: cIdx === 0 ? '30px' : '50px', marginBottom: '20px', borderBottom: '2px solid var(--primary-color)', display: 'inline-block', paddingBottom: '5px', fontSize: '1.5rem', color: 'var(--primary-color)' }}>
+                    {cat.name}
+                  </h3>
+                  <div className="members-grid">
+                    {catMembers.length > 0 ? (
+                      catMembers.map((member: Record<string, string>, idx: number) => {
+                        let logoSrc = member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL'];
+                        if (logoSrc && logoSrc.includes('drive.google.com')) {
+                          const match = logoSrc.match(/d\/([a-zA-Z0-9_-]+)/);
+                          if (match && match[1]) {
+                            logoSrc = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
+                          }
+                        }
+                        const shopName = member.ShopName || member['屋号'] || member['会員名'] || '';
+                        const representative = member.Representative || member['代表者'] || '';
+
+                        return (
+                          <div key={idx} className="member-card">
+                            <div className="member-header">
+                              {logoSrc ? (
+                                <div className="member-logo-img" style={{ backgroundImage: `url(${logoSrc})`, color: 'transparent' }}>
+                                  {shopName ? shopName.charAt(0) : 'M'}
+                                </div>
+                              ) : (
+                                <div className="member-logo-img">{shopName ? shopName.charAt(0) : 'M'}</div>
+                              )}
+                              <div className="member-header-info">
+                                <h3>{shopName}</h3>
+                                {cat.name !== '賛助会員' && representative && (
+                                  <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', marginTop: '4px', marginBottom: '4px' }}>
+                                    代表: <strong>{representative}</strong>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="member-footer" style={{ paddingTop: '15px', borderTop: '1px solid #eee' }}>
+                              <div className="sns-links" style={{ marginTop: 0 }}>
+                                {member.Website && (
+                                  <a href={member.Website} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト"><i className="fa-solid fa-house"></i></a>
+                                )}
+                                {member.Instagram && (
+                                  <a href={member.Instagram} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
+                                )}
+                                {member.X && (
+                                  <a href={member.X} target="_blank" rel="noreferrer" className="sns-link sns-x" title="X (Twitter)"><i className="fa-brands fa-x-twitter"></i></a>
+                                )}
+                                {member.Blog && (
+                                  <a href={member.Blog} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p style={{ color: 'var(--text-light)', gridColumn: '1 / -1', textAlign: 'center', padding: '20px', fontSize: '1.1rem', background: '#fff', borderRadius: '8px' }}>
+                        現在、登録されている{cat.name}はありません。
+                      </p>
+                    )}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Section 8: 賛助会員入会案内 */}
+        <section id="join" className="section join-section">
+          <div className="container">
+            <h2 className="section-title">賛助会員入会のご案内</h2>
+            <p className="section-lead">JMDFの活動に賛同し、一緒にメダカ文化を育てていただける企業・団体様（賛助会員）を募集しています。</p>
+
+            <div className="join-grid" style={{ gridTemplateColumns: '1fr', maxWidth: '600px', margin: '0 auto' }}>
+              <div className="join-card">
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '15px' }}>賛助会員<br /><span style={{ fontSize: '1.1rem', color: 'var(--text-light)' }}>（応援していただける企業・団体様）</span></h3>
+                <p style={{ fontSize: '1.1rem', marginBottom: '25px' }}>私たちの活動を応援してくださる企業様や団体様が対象です。</p>
+                <a href="https://drive.google.com/file/d/1g1LHSpPzh9i9TASaPgEHyQJC8HwhCkf9/view?usp=drivesdk" id="link-sanjyo" target="_blank" rel="noreferrer" className="btn-primary" style={{ display: 'inline-block', fontSize: '1rem', padding: '12px 25px' }}>募集要項を確認する（PDF）</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 9: お問合せ */}
         <section id="contact" className="section contact-section bg-primary-light">
           <div className="container">
-            <h2 className="section-title">お問い合わせ</h2>
-            <p className="section-lead" style={{ marginBottom: '20px' }}>当連盟に関するご質問、入会に関するご相談など、お気軽にお問い合わせください。</p>
+            <h2 className="section-title">お問合せ</h2>
+            <p className="section-lead">入会のご相談や、イベントへの審査員派遣のご依頼など、こちらからお気軽にご連絡ください。</p>
+
+            <div style={{ maxWidth: '700px', margin: '0 auto 30px', background: 'var(--white)', padding: '30px', borderRadius: '20px', boxShadow: 'var(--box-shadow)', textAlign: 'center' }}>
+              <h3 style={{ color: 'var(--primary-color)', marginBottom: '20px', fontSize: '1.3rem' }}>お電話でのお問合せ</h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: '20px' }}>
+                <div>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px', color: 'var(--text-color)' }}>岡崎葵メダカ(天野)</div>
+                  <a href="tel:09015631412" style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-color)', textDecoration: 'none' }}>090-1563-1412</a>
+                </div>
+                <div>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px', color: 'var(--text-color)' }}>メダカチョモランマ(姫野)</div>
+                  <a href="tel:08027190123" style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-color)', textDecoration: 'none' }}>080-2719-0123</a>
+                </div>
+              </div>
+            </div>
+
             <div className="contact-form-wrapper" style={{ textAlign: 'center', padding: '30px' }}>
               <p style={{ fontSize: '1.2rem', marginBottom: '30px' }}>お問い合わせは以下のフォーム、またはお電話にて承っております。</p>
               <a href="https://forms.gle/zXm9w6T57JvHhL9n9" target="_blank" rel="noreferrer" className="btn-primary" style={{ display: 'inline-block', marginBottom: '20px', padding: '20px 40px', fontSize: '1.3rem', width: '100%', maxWidth: '400px' }}>
@@ -290,7 +401,7 @@ export default async function Page() {
             <p className="footer-desc">ジャパン改良メダカディーラーズフェデレーション<br />日本の改良メダカの価値と信頼を未来へ。</p>
             <div className="footer-links">
               <a href="#news">お知らせ</a>
-              <a href="#trust">信頼の証</a>
+              <a href="#trust">信頼の約束</a>
               <a href="#members">加盟店</a>
               <a href="#join">入会案内</a>
               <a href="#contact">お問合せ</a>
