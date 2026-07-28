@@ -40,7 +40,7 @@ export default async function Page() {
     { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
     { ShopName: 'パズルピースめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
     { ShopName: '静めだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/livingmedaka/', Website: '' },
-    { ShopName: '修めだか(nobu)', Category: '準会員', Role: '', Instagram: '', Website: '' },
+    { ShopName: '修(nobu)めだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
     { ShopName: '曼珠沙華めだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
     { ShopName: 'クライムメダカ', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/climbyk54/', Website: 'https://linktr.ee/climbyk54' },
     { ShopName: '奥羽めだか', Category: '準会員', Role: '', Instagram: '', Website: '' }
@@ -78,7 +78,11 @@ export default async function Page() {
 
     if (key === '準会員') {
       defaultJunMembers.forEach(d => {
-        if (!existingList.some(m => (m.ShopName || m['屋号'] || m['会員名']) === d.ShopName)) {
+        if (!existingList.some(m => {
+          const mName = (m.ShopName || m['屋号'] || m['会員名'] || '').replace(/[\s（）\(\)]/g, '');
+          const dName = d.ShopName.replace(/[\s（）\(\)]/g, '');
+          return mName === dName || (mName.includes('修') && mName.includes('nobu'));
+        })) {
           existingList.push(d);
         }
       });
@@ -346,7 +350,10 @@ export default async function Page() {
                         const knownLogos: Record<string, string> = {
                           '植木屋丸ちゃんめだか': '/logos/logo_uekiya.jpg',
                           'パズルピースめだか': '/logos/logo_puzzlepiece.jpg',
+                          '修(nobu)めだか': '/logos/logo_nobu.jpg',
+                          '修（nobu）めだか': '/logos/logo_nobu.jpg',
                           '修めだか(nobu)': '/logos/logo_nobu.jpg',
+                          '修めだか（nobu）': '/logos/logo_nobu.jpg',
                           '曼珠沙華めだか': '/logos/logo_manjushage.jpg',
                           '静めだか': '/logos/logo_shizuka.jpg',
                           '奥羽めだか': '/logos/logo_ou.jpg',
