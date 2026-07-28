@@ -36,6 +36,18 @@ export default async function Page() {
     return url;
   };
 
+  const getInstagramUsername = (instaUrl: string) => {
+    if (!instaUrl) return '';
+    const match = instaUrl.match(/instagram\.com\/([a-zA-Z0-9_\.]+)\/?/);
+    if (match && match[1]) {
+      const username = match[1];
+      if (username !== 'p' && username !== 'reel' && username !== 'tv' && username !== 'stories') {
+        return username;
+      }
+    }
+    return '';
+  };
+
   const defaultSeiMembers: Record<string, string>[] = [
     { ShopName: '岡崎葵メダカ', Category: '正会員', Representative: '天野 雅弘', Instagram: '' },
     { ShopName: '京めだか', Category: '正会員', Representative: '', Instagram: 'https://www.instagram.com/kyomedaka075/' },
@@ -390,6 +402,15 @@ export default async function Page() {
                         };
 
                         let logoSrc = member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL'] || knownLogos[shopName] || '';
+
+                        if (!logoSrc) {
+                          const instaUrl = member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || '';
+                          const username = getInstagramUsername(instaUrl);
+                          if (username) {
+                            logoSrc = `https://api.microlink.io/?url=https://www.instagram.com/${username}&embed=image.url`;
+                          }
+                        }
+
                         if (logoSrc && logoSrc.includes('drive.google.com')) {
                           const match = logoSrc.match(/d\/([a-zA-Z0-9_-]+)/);
                           if (match && match[1]) {
