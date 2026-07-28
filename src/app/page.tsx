@@ -423,6 +423,24 @@ export default async function Page() {
                           }
                         }
 
+                        const officialRoles: Record<string, string> = {
+                          '岡崎葵メダカ': '代表理事',
+                          '京めだか': '副代表理事',
+                          '美夜古めだか': '理事',
+                          '都めだか': '理事',
+                          'メダカチョモランマ': '理事',
+                          'エムリンク': '理事',
+                          'M-LINK': '理事',
+                          '桃ちゃんめだか': '理事',
+                          'ぼっけーめだか': '監事',
+                          'ぼっけぇめだか': '監事',
+                          'リビングめだか': '広報・スポンサー・協賛関連',
+                          '静めだか': '広報・スポンサー・協賛関連',
+                          'KJ': '広報・スポンサー・協賛関連'
+                        };
+
+                        const role = member.Role || member['Role'] || member['役職・担当'] || member['役職'] || officialRoles[shopName] || '';
+
                         return (
                           <div key={idx} className="member-card">
                             <div className="member-header">
@@ -457,9 +475,9 @@ export default async function Page() {
                                     代表: <strong>{representative}</strong>
                                   </div>
                                 )}
-                                {(member.Role || member['Role'] || member['役職・担当'] || member['役職']) && (
+                                {role && (
                                   <div style={{ fontSize: '0.85rem', color: 'var(--primary-color)', marginTop: '4px', fontWeight: 'bold' }}>
-                                    役職・担当: <strong>{member.Role || member['Role'] || member['役職・担当'] || member['役職']}</strong>
+                                    役職・担当: <strong>{role}</strong>
                                   </div>
                                 )}
                               </div>
