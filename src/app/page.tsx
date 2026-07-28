@@ -36,9 +36,31 @@ export default async function Page() {
     return url;
   };
 
-  const sanjyoLogos = Array.isArray(memberLogos)
+  const defaultJunMembers: Record<string, string>[] = [
+    { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '' },
+    { ShopName: 'パズルピースめだか', Category: '準会員', Role: '' },
+    { ShopName: '静めだか', Category: '準会員', Role: '' },
+    { ShopName: '修めだか(nobu)', Category: '準会員', Role: '' },
+    { ShopName: '曼珠沙華めだか', Category: '準会員', Role: '' },
+    { ShopName: 'クライムメダカ', Category: '準会員', Role: '' },
+    { ShopName: '奥羽めだか', Category: '準会員', Role: '' }
+  ];
+
+  const defaultSanjyoMembers: Record<string, string>[] = [
+    { ShopName: 'KJ', Category: '賛助会員', Role: '広報・スポンサー・協賛関連', 会員名: 'KJ', 会員種別: '賛助会員' },
+    { ShopName: 'たかちゃん', Category: '賛助会員', Role: '', 会員名: 'たかちゃん', 会員種別: '賛助会員' }
+  ];
+
+  const rawSanjyoLogos = Array.isArray(memberLogos)
     ? memberLogos.filter((logo: Record<string, string>) => logo['会員種別'] === '賛助会員')
     : [];
+
+  const sanjyoLogos = [...rawSanjyoLogos];
+  defaultSanjyoMembers.forEach(d => {
+    if (!sanjyoLogos.some(l => (l['会員名'] || l.ShopName) === d.ShopName)) {
+      sanjyoLogos.push({ 会員名: d.ShopName, 会員種別: '賛助会員', ロゴURL: '', リンク先: '#' });
+    }
+  });
 
   const categories = [
     { name: '正会員', key: '正会員' },
@@ -47,13 +69,30 @@ export default async function Page() {
   ];
 
   const getCategoryMembers = (key: string): Record<string, string>[] => {
+    let existingList: Record<string, string>[] = [];
     if (Array.isArray(members)) {
-      return members.filter((m: Record<string, string>) => (m['Category'] || m['会員種別'] || '正会員') === key);
+      existingList = members.filter((m: Record<string, string>) => (m['Category'] || m['会員種別'] || '正会員') === key);
+    } else if (members && typeof members === 'object') {
+      existingList = [...((members as Record<string, Record<string, string>[]>)[key] || [])];
     }
-    if (members && typeof members === 'object') {
-      return (members as Record<string, Record<string, string>[]>)[key] || [];
+
+    if (key === '準会員') {
+      defaultJunMembers.forEach(d => {
+        if (!existingList.some(m => (m.ShopName || m['屋号'] || m['会員名']) === d.ShopName)) {
+          existingList.push(d);
+        }
+      });
     }
-    return [];
+
+    if (key === '賛助会員') {
+      defaultSanjyoMembers.forEach(d => {
+        if (!existingList.some(m => (m.ShopName || m['屋号'] || m['会員名']) === d.ShopName)) {
+          existingList.push(d);
+        }
+      });
+    }
+
+    return existingList;
   };
 
   // Mosaic images for hero background (6 loops = ~210 images to fill grid seamlessly without gaps)
@@ -326,6 +365,11 @@ export default async function Page() {
                                 {cat.name !== '賛助会員' && representative && (
                                   <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', marginTop: '4px', marginBottom: '4px' }}>
                                     代表: <strong>{representative}</strong>
+                                  </div>
+                                )}
+                                {member.Role && (
+                                  <div style={{ fontSize: '0.85rem', color: 'var(--primary-color)', marginTop: '4px', fontWeight: 'bold' }}>
+                                    担当: <strong>{member.Role}</strong>
                                   </div>
                                 )}
                               </div>
