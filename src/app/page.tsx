@@ -340,25 +340,43 @@ export default async function Page() {
                   <div className="members-grid">
                     {catMembers.length > 0 ? (
                       catMembers.map((member: Record<string, string>, idx: number) => {
-                        let logoSrc = member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL'];
+                        const shopName = member.ShopName || member['屋号'] || member['会員名'] || '';
+                        const representative = member.Representative || member['代表者'] || '';
+
+                        const knownLogos: Record<string, string> = {
+                          '植木屋丸ちゃんめだか': '/logos/logo_uekiya.jpg',
+                          'パズルピースめだか': '/logos/logo_puzzlepiece.jpg',
+                          '修めだか(nobu)': '/logos/logo_nobu.jpg',
+                          '曼珠沙華めだか': '/logos/logo_manjushage.jpg',
+                          '静めだか': '/logos/logo_livingmedaka.jpg'
+                        };
+
+                        let logoSrc = member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL'] || knownLogos[shopName] || '';
                         if (logoSrc && logoSrc.includes('drive.google.com')) {
                           const match = logoSrc.match(/d\/([a-zA-Z0-9_-]+)/);
                           if (match && match[1]) {
                             logoSrc = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
                           }
                         }
-                        const shopName = member.ShopName || member['屋号'] || member['会員名'] || '';
-                        const representative = member.Representative || member['代表者'] || '';
 
                         return (
                           <div key={idx} className="member-card">
                             <div className="member-header">
                               {logoSrc ? (
-                                <div className="member-logo-img" style={{ backgroundImage: `url(${logoSrc})`, color: 'transparent' }}>
+                                <div className="member-logo-img" style={{ backgroundImage: `url(${logoSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' }}>
                                   {shopName ? shopName.charAt(0) : 'M'}
                                 </div>
                               ) : (
-                                <div className="member-logo-img">{shopName ? shopName.charAt(0) : 'M'}</div>
+                                <div className="member-logo-img" style={{
+                                  background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: '#ffffff',
+                                  boxShadow: '0 4px 10px rgba(220, 39, 67, 0.3)'
+                                }} title="Instagram アイコン">
+                                  <i className="fa-brands fa-instagram" style={{ fontSize: '1.8rem' }}></i>
+                                </div>
                               )}
                               <div className="member-header-info">
                                 <h3>{shopName}</h3>
