@@ -49,13 +49,14 @@ export default async function Page() {
   };
 
   const defaultSeiMembers: Record<string, string>[] = [
-    { ShopName: '岡崎葵メダカ', Category: '正会員', Representative: '天野 雅弘', Instagram: '' },
-    { ShopName: '京めだか', Category: '正会員', Representative: '', Instagram: 'https://www.instagram.com/kyomedaka075/' },
-    { ShopName: 'メダカチョモランマ', Category: '正会員', Representative: '姫野 代表', Instagram: '' },
-    { ShopName: '都めだか', Category: '正会員', Representative: '', Instagram: '' },
-    { ShopName: 'M-LINK', Category: '正会員', Representative: '', Instagram: '' },
-    { ShopName: '桃ちゃんメダカ', Category: '正会員', Representative: '', Instagram: '' },
-    { ShopName: 'ぼっけぇめだか', Category: '正会員', Representative: '', Instagram: '' }
+    { ShopName: '岡崎葵メダカ', Category: '正会員', Representative: '天野 雅弘', Role: '代表理事', Instagram: '' },
+    { ShopName: '京めだか', Category: '正会員', Representative: '', Role: '副代表理事', Instagram: 'https://www.instagram.com/kyomedaka075/' },
+    { ShopName: '美夜古めだか', Category: '正会員', Representative: '', Role: '理事', Instagram: '' },
+    { ShopName: 'メダカチョモランマ', Category: '正会員', Representative: '姫野 代表', Role: '理事', Instagram: '' },
+    { ShopName: 'エムリンク', Category: '正会員', Representative: '', Role: '理事', Instagram: '' },
+    { ShopName: '桃ちゃんめだか', Category: '正会員', Representative: '', Role: '理事', Instagram: '' },
+    { ShopName: 'ぼっけーめだか', Category: '正会員', Representative: '', Role: '監事', Instagram: '' },
+    { ShopName: 'リビングめだか', Category: '正会員', Representative: '', Role: '広報・スポンサー・協賛関連', Instagram: 'https://www.instagram.com/livingmedaka/' }
   ];
 
   const defaultJunMembers: Record<string, string>[] = [
@@ -381,11 +382,16 @@ export default async function Page() {
                           // 正会員
                           '岡崎葵メダカ': '/logos/logo_okazaki.png',
                           '京めだか': '/logos/logo_kyomedaka.png',
-                          'メダカチョモランマ': '/logos/logo_chomo.png',
+                          '美夜古めだか': '/logos/logo_miyako.png',
                           '都めだか': '/logos/logo_miyako.png',
+                          'メダカチョモランマ': '/logos/logo_chomo.png',
+                          'エムリンク': '/logos/logo_mlink.png',
                           'M-LINK': '/logos/logo_mlink.png',
-                          '桃ちゃんメダカ': '/logos/logo_momo.png',
+                          '桃ちゃんめだか': '/logos/logo_momo.png',
+                          'ぼっけーめだか': '/logos/logo_bokkei.png',
                           'ぼっけぇめだか': '/logos/logo_bokkei.png',
+                          'リビングめだか': '/logos/logo_shizuka.jpg',
+                          '静めだか': '/logos/logo_shizuka.jpg',
 
                           // 準会員・賛助会員
                           '植木屋丸ちゃんめだか': '/logos/logo_uekiya.jpg',
@@ -395,7 +401,6 @@ export default async function Page() {
                           '修めだか(nobu)': '/logos/logo_nobu.jpg',
                           '修めだか（nobu）': '/logos/logo_nobu.jpg',
                           '曼珠沙華めだか': '/logos/logo_manjushage.jpg',
-                          '静めだか': '/logos/logo_shizuka.jpg',
                           '奥羽めだか': '/logos/logo_ou.jpg',
                           'クライムメダカ': '/logos/logo_climb.jpg',
                           'たかちゃん': '/logos/logo_takachan.jpg'
@@ -452,9 +457,9 @@ export default async function Page() {
                                     代表: <strong>{representative}</strong>
                                   </div>
                                 )}
-                                {member.Role && (
+                                {(member.Role || member['Role'] || member['役職・担当'] || member['役職']) && (
                                   <div style={{ fontSize: '0.85rem', color: 'var(--primary-color)', marginTop: '4px', fontWeight: 'bold' }}>
-                                    担当: <strong>{member.Role}</strong>
+                                    役職・担当: <strong>{member.Role || member['Role'] || member['役職・担当'] || member['役職']}</strong>
                                   </div>
                                 )}
                               </div>
