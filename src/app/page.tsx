@@ -47,8 +47,8 @@ export default async function Page() {
   ];
 
   const defaultSanjyoMembers: Record<string, string>[] = [
-    { ShopName: 'KJ', Category: '賛助会員', Role: '広報・スポンサー・協賛関連', 会員名: 'KJ', 会員種別: '賛助会員' },
-    { ShopName: 'たかちゃん', Category: '賛助会員', Role: '', 会員名: 'たかちゃん', 会員種別: '賛助会員' }
+    { ShopName: 'KJ', Category: '賛助会員', Role: '広報・スポンサー・協賛関連', 会員名: 'KJ', 会員種別: '賛助会員', ロゴURL: '' },
+    { ShopName: 'たかちゃん', Category: '賛助会員', Role: '', 会員名: 'たかちゃん', 会員種別: '賛助会員', ロゴURL: '/logos/logo_takachan.jpg' }
   ];
 
   const rawSanjyoLogos = Array.isArray(memberLogos)
@@ -58,7 +58,7 @@ export default async function Page() {
   const sanjyoLogos = [...rawSanjyoLogos];
   defaultSanjyoMembers.forEach(d => {
     if (!sanjyoLogos.some(l => (l['会員名'] || l.ShopName) === d.ShopName)) {
-      sanjyoLogos.push({ 会員名: d.ShopName, 会員種別: '賛助会員', ロゴURL: '', リンク先: '#' });
+      sanjyoLogos.push({ 会員名: d.ShopName, 会員種別: '賛助会員', ロゴURL: d.ロゴURL || '', リンク先: '#' });
     }
   });
 
@@ -348,7 +348,11 @@ export default async function Page() {
                           'パズルピースめだか': '/logos/logo_puzzlepiece.jpg',
                           '修めだか(nobu)': '/logos/logo_nobu.jpg',
                           '曼珠沙華めだか': '/logos/logo_manjushage.jpg',
-                          '静めだか': '/logos/logo_livingmedaka.jpg'
+                          '静めだか': '/logos/logo_shizuka.jpg',
+                          '奥羽めだか': '/logos/logo_ou.jpg',
+                          'クライムメダカ': '/logos/logo_climb.jpg',
+                          '岡崎葵メダカ': '/logos/logo_okazaki.jpg',
+                          'たかちゃん': '/logos/logo_takachan.jpg'
                         };
 
                         let logoSrc = member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL'] || knownLogos[shopName] || '';
