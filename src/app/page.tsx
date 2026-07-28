@@ -37,18 +37,18 @@ export default async function Page() {
   };
 
   const defaultJunMembers: Record<string, string>[] = [
-    { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '' },
-    { ShopName: 'パズルピースめだか', Category: '準会員', Role: '' },
-    { ShopName: '静めだか', Category: '準会員', Role: '' },
-    { ShopName: '修めだか(nobu)', Category: '準会員', Role: '' },
-    { ShopName: '曼珠沙華めだか', Category: '準会員', Role: '' },
-    { ShopName: 'クライムメダカ', Category: '準会員', Role: '' },
-    { ShopName: '奥羽めだか', Category: '準会員', Role: '' }
+    { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
+    { ShopName: 'パズルピースめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
+    { ShopName: '静めだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/livingmedaka/', Website: '' },
+    { ShopName: '修めだか(nobu)', Category: '準会員', Role: '', Instagram: '', Website: '' },
+    { ShopName: '曼珠沙華めだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
+    { ShopName: 'クライムメダカ', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/climbyk54/', Website: 'https://linktr.ee/climbyk54' },
+    { ShopName: '奥羽めだか', Category: '準会員', Role: '', Instagram: '', Website: '' }
   ];
 
   const defaultSanjyoMembers: Record<string, string>[] = [
-    { ShopName: 'KJ', Category: '賛助会員', Role: '広報・スポンサー・協賛関連', 会員名: 'KJ', 会員種別: '賛助会員', ロゴURL: '' },
-    { ShopName: 'たかちゃん', Category: '賛助会員', Role: '', 会員名: 'たかちゃん', 会員種別: '賛助会員', ロゴURL: '/logos/logo_takachan.jpg' }
+    { ShopName: 'KJ', Category: '賛助会員', Role: '広報・スポンサー・協賛関連', 会員名: 'KJ', 会員種別: '賛助会員', ロゴURL: '', Instagram: '', Website: '' },
+    { ShopName: 'たかちゃん', Category: '賛助会員', Role: '', 会員名: 'たかちゃん', 会員種別: '賛助会員', ロゴURL: '/logos/logo_takachan.jpg', Instagram: '', Website: '' }
   ];
 
   const rawSanjyoLogos = Array.isArray(memberLogos)
@@ -406,17 +406,17 @@ export default async function Page() {
                             </div>
                             <div className="member-footer" style={{ paddingTop: '15px', borderTop: '1px solid #eee' }}>
                               <div className="sns-links" style={{ marginTop: 0 }}>
-                                {member.Website && (
-                                  <a href={member.Website} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト"><i className="fa-solid fa-house"></i></a>
+                                {(member.Website || member['Website'] || member['HP'] || member['ウェブサイト']) && (
+                                  <a href={member.Website || member['Website'] || member['HP'] || member['ウェブサイト']} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト"><i className="fa-solid fa-house"></i></a>
                                 )}
-                                {member.Instagram && (
-                                  <a href={member.Instagram} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
+                                {(member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ']) && (
+                                  <a href={member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ']} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
                                 )}
-                                {member.X && (
-                                  <a href={member.X} target="_blank" rel="noreferrer" className="sns-link sns-x" title="X (Twitter)"><i className="fa-brands fa-x-twitter"></i></a>
+                                {(member.X || member['X'] || member['Twitter'] || member['ツイッター']) && (
+                                  <a href={member.X || member['X'] || member['Twitter'] || member['ツイッター']} target="_blank" rel="noreferrer" className="sns-link sns-x" title="X (Twitter)"><i className="fa-brands fa-x-twitter"></i></a>
                                 )}
-                                {member.Blog && (
-                                  <a href={member.Blog} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
+                                {(member.Blog || member['Blog'] || member['ブログ']) && (
+                                  <a href={member.Blog || member['Blog'] || member['ブログ']} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
                                 )}
                               </div>
                             </div>
