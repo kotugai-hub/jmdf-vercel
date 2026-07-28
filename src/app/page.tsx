@@ -36,6 +36,16 @@ export default async function Page() {
     return url;
   };
 
+  const defaultSeiMembers: Record<string, string>[] = [
+    { ShopName: '岡崎葵メダカ', Category: '正会員', Representative: '天野 雅弘', Instagram: '' },
+    { ShopName: '京めだか', Category: '正会員', Representative: '', Instagram: 'https://www.instagram.com/kyomedaka075/' },
+    { ShopName: 'メダカチョモランマ', Category: '正会員', Representative: '姫野 代表', Instagram: '' },
+    { ShopName: '都めだか', Category: '正会員', Representative: '', Instagram: '' },
+    { ShopName: 'M-LINK', Category: '正会員', Representative: '', Instagram: '' },
+    { ShopName: '桃ちゃんメダカ', Category: '正会員', Representative: '', Instagram: '' },
+    { ShopName: 'ぼっけぇめだか', Category: '正会員', Representative: '', Instagram: '' }
+  ];
+
   const defaultJunMembers: Record<string, string>[] = [
     { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
     { ShopName: 'パズルピースめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
@@ -74,6 +84,14 @@ export default async function Page() {
       existingList = members.filter((m: Record<string, string>) => (m['Category'] || m['会員種別'] || '正会員') === key);
     } else if (members && typeof members === 'object') {
       existingList = [...((members as Record<string, Record<string, string>[]>)[key] || [])];
+    }
+
+    if (key === '正会員') {
+      defaultSeiMembers.forEach(d => {
+        if (!existingList.some(m => (m.ShopName || m['屋号'] || m['会員名']) === d.ShopName)) {
+          existingList.push(d);
+        }
+      });
     }
 
     if (key === '準会員') {
@@ -348,6 +366,16 @@ export default async function Page() {
                         const representative = member.Representative || member['代表者'] || '';
 
                         const knownLogos: Record<string, string> = {
+                          // 正会員
+                          '岡崎葵メダカ': '/logos/logo_okazaki.png',
+                          '京めだか': '/logos/logo_kyomedaka.png',
+                          'メダカチョモランマ': '/logos/logo_chomo.png',
+                          '都めだか': '/logos/logo_miyako.png',
+                          'M-LINK': '/logos/logo_mlink.png',
+                          '桃ちゃんメダカ': '/logos/logo_momo.png',
+                          'ぼっけぇめだか': '/logos/logo_bokkei.png',
+
+                          // 準会員・賛助会員
                           '植木屋丸ちゃんめだか': '/logos/logo_uekiya.jpg',
                           'パズルピースめだか': '/logos/logo_puzzlepiece.jpg',
                           '修(nobu)めだか': '/logos/logo_nobu.jpg',
@@ -358,7 +386,6 @@ export default async function Page() {
                           '静めだか': '/logos/logo_shizuka.jpg',
                           '奥羽めだか': '/logos/logo_ou.jpg',
                           'クライムメダカ': '/logos/logo_climb.jpg',
-                          '岡崎葵メダカ': '/logos/logo_okazaki.jpg',
                           'たかちゃん': '/logos/logo_takachan.jpg'
                         };
 
