@@ -367,7 +367,15 @@ export default async function Page() {
                           <div key={idx} className="member-card">
                             <div className="member-header">
                               {logoSrc ? (
-                                <div className="member-logo-img" style={{ backgroundImage: `url(${logoSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' }}>
+                                <div className="member-logo-img" style={{
+                                  backgroundImage: `url(${logoSrc})`,
+                                  backgroundSize: 'contain',
+                                  backgroundRepeat: 'no-repeat',
+                                  backgroundPosition: 'center',
+                                  backgroundColor: '#ffffff',
+                                  padding: '8px',
+                                  color: 'transparent'
+                                }}>
                                   {shopName ? shopName.charAt(0) : 'M'}
                                 </div>
                               ) : (
