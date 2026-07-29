@@ -467,6 +467,16 @@ export default async function Page() {
 
                         const role = member.Role || member['Role'] || member['役職・担当'] || member['役職'] || officialRoles[shopName] || '';
 
+                        const isMedaichi =
+                          String(member.MEDAICHI).toUpperCase() === 'TRUE' ||
+                          String(member.MEDAICHI) === '1' ||
+                          String(member.MEDAICHI) === '〇' ||
+                          String(member['メダイチ']) === '〇' ||
+                          String(member['メダイチ']).toUpperCase() === 'TRUE' ||
+                          String(member['MEDAICHI利用']) === '〇' ||
+                          String(member['MEDAICHI利用']).toUpperCase() === 'TRUE' ||
+                          shopName === '岡崎葵メダカ';
+
                         return (
                           <div key={idx} className="member-card">
                             <div className="member-header">
@@ -495,7 +505,29 @@ export default async function Page() {
                                 </div>
                               )}
                               <div className="member-header-info">
-                                <h3>{shopName}</h3>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                  <h3 style={{ margin: 0 }}>{shopName}</h3>
+                                  {isMedaichi && (
+                                    <span
+                                      style={{
+                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
+                                        color: '#ffffff',
+                                        padding: '3px 8px',
+                                        borderRadius: '12px',
+                                        fontSize: '0.72rem',
+                                        fontWeight: 'bold',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
+                                        letterSpacing: '0.3px'
+                                      }}
+                                      title="MEDAICHI 導入加盟店"
+                                    >
+                                      <i className="fa-solid fa-gem" style={{ fontSize: '0.65rem' }}></i> MEDAICHI
+                                    </span>
+                                  )}
+                                </div>
                                 {cat.name !== '賛助会員' && representative && (
                                   <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', marginTop: '4px', marginBottom: '4px' }}>
                                     代表: <strong>{representative}</strong>
