@@ -331,17 +331,26 @@ export default async function Page() {
 
             <div className="trust-grid">
               <div className="trust-card">
-                <div className="trust-icon">📷</div>
+                <div className="trust-icon" style={{ fontSize: 'inherit', marginBottom: '15px' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/promise_camera.jpg" alt="ありのままの写真" style={{ width: '110px', height: '110px', objectFit: 'contain', margin: '0 auto', filter: 'drop-shadow(0 8px 16px rgba(0,151,167,0.15))', transition: 'transform 0.3s ease' }} />
+                </div>
                 <h3 className="trust-title">① 加工しない<br />「ありのままの写真」</h3>
                 <p className="trust-desc">実物の美しさをそのまま伝えるため、色を極端に濃くするなどの加工は行いません。「届いたメダカが写真と違う」というガッカリを防ぎます。</p>
               </div>
               <div className="trust-card">
-                <div className="trust-icon">🐟</div>
+                <div className="trust-icon" style={{ fontSize: 'inherit', marginBottom: '15px' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/promise_pedigree.jpg" alt="品種情報の正確な開示" style={{ width: '110px', height: '110px', objectFit: 'contain', margin: '0 auto', filter: 'drop-shadow(0 8px 16px rgba(0,151,167,0.15))', transition: 'transform 0.3s ease' }} />
+                </div>
                 <h3 className="trust-title">② 品種情報の<br />正確な開示</h3>
                 <p className="trust-desc">改良メダカを販売する際は、その交配過程や表現など、品種に関する正確な情報をお伝えします。</p>
               </div>
               <div className="trust-card">
-                <div className="trust-icon">🔰</div>
+                <div className="trust-icon" style={{ fontSize: 'inherit', marginBottom: '15px' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/promise_shield.jpg" alt="安心の目印" style={{ width: '110px', height: '110px', objectFit: 'contain', margin: '0 auto', filter: 'drop-shadow(0 8px 16px rgba(0,151,167,0.15))', transition: 'transform 0.3s ease' }} />
+                </div>
                 <h3 className="trust-title">③ お店そのものが<br />「安心の目印」</h3>
                 <p className="trust-desc">1匹ずつの証明書ではなく、ルールを守る「JMDF加盟店」という看板自体を信用のおけるブランドとして育てます。</p>
               </div>
