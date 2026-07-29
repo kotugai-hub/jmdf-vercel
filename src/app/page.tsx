@@ -416,7 +416,7 @@ export default async function Page() {
                           '桃ちゃんめだか': '/logos/logo_momo.png',
                           'ぼっけーめだか': '/logos/logo_bokkei.png',
                           'ぼっけぇめだか': '/logos/logo_bokkei.png',
-                          'リビングめだか': '/logos/logo_shizuka.jpg',
+                          'リビングめだか': '/logos/logo_living.jpg',
                           '静めだか': '/logos/logo_shizuka.jpg',
 
                           // 準会員・賛助会員
