@@ -147,6 +147,8 @@
         }
         .sns-link:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); color: #fff; opacity: 0.85; }
         .sns-instagram { background-color: #E1306C; }
+        .sns-instagram-2 { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); position: relative; }
+        .sns-auction { background-color: #ff9800; color: #ffffff; }
         .sns-x { background-color: #000000; }
         .sns-blog { background-color: #2E7D32; }
         .sns-website { background-color: #1976D2; }

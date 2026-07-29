@@ -509,12 +509,21 @@ export default async function Page() {
                               </div>
                             </div>
                             <div className="member-footer" style={{ paddingTop: '15px', borderTop: '1px solid #eee' }}>
-                              <div className="sns-links" style={{ marginTop: 0 }}>
+                              <div className="sns-links" style={{ marginTop: 0, flexWrap: 'wrap' }}>
                                 {(member.Website || member['Website'] || member['HP'] || member['ウェブサイト']) && (
                                   <a href={member.Website || member['Website'] || member['HP'] || member['ウェブサイト']} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト"><i className="fa-solid fa-house"></i></a>
                                 )}
-                                {(member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ']) && (
-                                  <a href={member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ']} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
+                                {(member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || member['Instagram_1'] || member['Instagram1']) && (
+                                  <a href={member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || member['Instagram_1'] || member['Instagram1']} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram (メイン)"><i className="fa-brands fa-instagram"></i></a>
+                                )}
+                                {(member.Instagram2 || member['Instagram2'] || member['Instagram_2'] || member['インスタグラム2'] || member['インスタ2'] || member['サブインスタ']) && (
+                                  <a href={member.Instagram2 || member['Instagram2'] || member['Instagram_2'] || member['インスタグラム2'] || member['インスタ2'] || member['サブインスタ']} target="_blank" rel="noreferrer" className="sns-link sns-instagram-2" title="Instagram (サブ)">
+                                    <i className="fa-brands fa-instagram"></i>
+                                    <span style={{ position: 'absolute', bottom: '0px', right: '3px', fontSize: '0.6rem', fontWeight: '900', color: '#ffffff', textShadow: '0 0 3px #000' }}>2</span>
+                                  </a>
+                                )}
+                                {(member.Auction || member['Auction'] || member['Yahoo'] || member['YahooAuction'] || member['ヤフオク'] || member['オークション'] || member['オークションURL']) && (
+                                  <a href={member.Auction || member['Auction'] || member['Yahoo'] || member['YahooAuction'] || member['ヤフオク'] || member['オークション'] || member['オークションURL']} target="_blank" rel="noreferrer" className="sns-link sns-auction" title="ヤフオク / オークション"><i className="fa-solid fa-gavel"></i></a>
                                 )}
                                 {(member.X || member['X'] || member['Twitter'] || member['ツイッター']) && (
                                   <a href={member.X || member['X'] || member['Twitter'] || member['ツイッター']} target="_blank" rel="noreferrer" className="sns-link sns-x" title="X (Twitter)"><i className="fa-brands fa-x-twitter"></i></a>
