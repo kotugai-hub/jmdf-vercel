@@ -1,6 +1,7 @@
 import React from 'react';
 import galleryImages from './gallery.json';
 import ActivityThumb from './ActivityThumb';
+import Header from './Header';
 
 async function getData() {
   try {
@@ -141,29 +142,7 @@ export default async function Page() {
 
   return (
     <>
-      <header className="header">
-        <div className="header-container">
-          <div className="header-logo">
-            <a href="#" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://files.catbox.moe/j7d5pa.png" alt="JMDF ロゴ" style={{ height: '65px' }} />
-            </a>
-          </div>
-          <nav className="header-nav">
-            <ul className="nav-list">
-              <li><a href="#news" className="nav-link">お知らせ</a></li>
-              <li><a href="#trust" className="nav-link">信頼の約束</a></li>
-              <li><a href="#members" className="nav-link">加盟店一覧</a></li>
-              <li><a href="#join" className="nav-link">賛助会員入会案内</a></li>
-            </ul>
-          </nav>
-          <div className="header-action">
-            <a href="#contact" className="btn-contact">
-              <span className="btn-icon">✉️</span> メールでお問合せ
-            </a>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main>
         {/* Section 1: Hero Mosaic Background (GAS Top Background) */}

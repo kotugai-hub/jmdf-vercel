@@ -164,14 +164,9 @@
 
         @media (max-width: 768px) {
             html { font-size: 14px; }
-            .header { padding: 5px 10px; }
-            .header-logo a { flex-direction: column !important; align-items: flex-start !important; }
-            .custom-jmdf-logo { margin-right: 0 !important; margin-bottom: 2px !important; }
-            .custom-jmdf-logo img { height: 35px !important; }
-            .logo-sub { font-size: 0.55rem !important; margin-left: 0 !important; margin-top: 2px !important; }
-            .header-nav, .header-action { display: none; }
-            .mobile-menu-btn { display: flex; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; background: transparent; border: none; cursor: pointer; }
-            .mobile-menu-btn span { width: 100%; height: 3px; background-color: var(--primary-color); border-radius: 3px; }
+            .desktop-only { display: none !important; }
+            .mobile-hamburger-btn { display: flex !important; }
+            .header-logo img { height: 45px !important; }
             .hero { min-height: 300px; }
             .hero-content { padding: 30px 20px; margin: 0 20px; }
             .hero-title { font-size: 1.8rem; }
