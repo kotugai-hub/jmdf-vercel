@@ -514,8 +514,8 @@ export default async function Page() {
                                   </div>
                                 )}
                                 {role && (
-                                  <div style={{ fontSize: '0.85rem', color: 'var(--primary-color)', marginTop: '4px', fontWeight: 'bold' }}>
-                                    役職・担当: <strong>{role}</strong>
+                                  <div style={{ fontSize: '0.9rem', color: 'var(--primary-color)', marginTop: '4px', fontWeight: 'bold' }}>
+                                    {role}
                                   </div>
                                 )}
                               </div>
