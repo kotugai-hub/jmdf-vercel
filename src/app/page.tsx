@@ -459,7 +459,9 @@ export default async function Page() {
                           'M-LINK': '理事',
                           '桃ちゃんめだか': '理事',
                           'ぼっけーめだか': '監事',
-                          'ぼっけぇめだか': '監事'
+                          'ぼっけぇめだか': '監事',
+                          'リビングめだか': '広報・スポンサー・協賛関連',
+                          'KJ': '広報・スポンサー・協賛関連'
                         };
 
                         const role = member.Role || member['Role'] || member['役職・担当'] || member['役職'] || officialRoles[shopName] || '';
