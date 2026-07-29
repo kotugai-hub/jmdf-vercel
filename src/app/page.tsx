@@ -1,5 +1,6 @@
 import React from 'react';
 import galleryImages from './gallery.json';
+import ActivityThumb from './ActivityThumb';
 
 async function getData() {
   try {
@@ -284,24 +285,13 @@ export default async function Page() {
               {memberNews && memberNews.length > 0 ? [0, 1].map((loop) => (
                 <React.Fragment key={loop}>
                   {memberNews.slice(0, 15).map((item: Record<string, string>, idx: number) => {
-                    let icon = '📝';
-                    if (item.Category === '動画') icon = '▶️';
-                    if (item.Category === '写真' || item.Category === 'インスタ') icon = '📷';
-
                     let catClass = 'cat-blog';
                     if (item.Category === '動画') catClass = 'cat-video';
                     if (item.Category === '写真' || item.Category === 'インスタ') catClass = 'cat-photo';
 
                     return (
                       <a key={`${loop}-${idx}`} href={item.URL || '#'} target="_blank" rel="noreferrer" className="activity-card" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-                        <div className="activity-thumb">
-                          {item.Thumbnail ? (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={item.Thumbnail} alt="サムネイル" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
-                          ) : (
-                            <span>{icon} {item.Category}</span>
-                          )}
-                        </div>
+                        <ActivityThumb item={item} />
                         <div className="activity-info">
                           <span className={`activity-category ${catClass}`}>{item.Category}</span>
                           <span className="shop-name">{item.ShopName}</span>
