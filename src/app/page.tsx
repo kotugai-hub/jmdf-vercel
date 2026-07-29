@@ -544,54 +544,31 @@ export default async function Page() {
                                   <a href={member.Blog || member['Blog'] || member['ブログ']} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
                                 )}
                                 {isMedaichi && (
-                                  medaichiUrl ? (
-                                    <a
-                                      href={medaichiUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="sns-link sns-medaichi"
-                                      title="MEDAICHI加盟店"
-                                      style={{
-                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
-                                        color: '#ffffff',
-                                        padding: '0 12px',
-                                        width: 'auto',
-                                        borderRadius: '20px',
-                                        fontSize: '0.78rem',
-                                        fontWeight: 'bold',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '4px',
-                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
-                                        textDecoration: 'none',
-                                        height: '38px'
-                                      }}
-                                    >
-                                      <i className="fa-solid fa-gem" style={{ fontSize: '0.75rem' }}></i> MEDAICHI
-                                    </a>
-                                  ) : (
-                                    <span
-                                      className="sns-link sns-medaichi"
-                                      title="MEDAICHI加盟店"
-                                      style={{
-                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
-                                        color: '#ffffff',
-                                        padding: '0 12px',
-                                        width: 'auto',
-                                        borderRadius: '20px',
-                                        fontSize: '0.78rem',
-                                        fontWeight: 'bold',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '4px',
-                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
-                                        cursor: 'default',
-                                        height: '38px'
-                                      }}
-                                    >
-                                      <i className="fa-solid fa-gem" style={{ fontSize: '0.75rem' }}></i> MEDAICHI
-                                    </span>
-                                  )
+                                  <a
+                                    href={medaichiUrl || 'https://note.com/medaichi/n/n0166e73079c3'}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="sns-link sns-medaichi"
+                                    title="MEDAICHI加盟店"
+                                    style={{
+                                      background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
+                                      color: '#ffffff',
+                                      padding: '0 14px',
+                                      width: 'auto',
+                                      borderRadius: '20px',
+                                      fontSize: '0.78rem',
+                                      fontWeight: 'bold',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
+                                      textDecoration: 'none',
+                                      height: '38px',
+                                      letterSpacing: '0.5px'
+                                    }}
+                                  >
+                                    MEDAICHI
+                                  </a>
                                 )}
                               </div>
                             </div>
