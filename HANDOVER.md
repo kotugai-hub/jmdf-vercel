@@ -1,123 +1,225 @@
-# 📘 JMDF（日本改良メダカディーラーズフェデレーション）公式HP 運営・引き継ぎマニュアル
+# 📗 JMDF（日本改良メダカディーラーズフェデレーション）公式HP
+# 開発・運用・GASバックエンド引き継ぎ完全仕様書 (Complete Specification & Handover Manual)
 
-本ドキュメントは、JMDF公式Webサイトおよび管理システム（Googleスプレッドシート / GAS / Vercel）の運営・管理を後任者へスムーズに引き継ぐための全工程マニュアルです。
+本ドキュメントは、JMDF（一般社団法人ジャパン改良メダカディーラーズフェデレーション）公式Webサイトおよびシステム（Next.js / Vercel / Google Apps Script / Googleスプレッドシート / Apify API）の管理者・開発者向け引き継ぎ完全マニュアルです。
 
 ---
 
-## 1. システム構成の全体像
+## 1. システムアーキテクチャと全自動データフロー
 
-本Webサイトは、**「専門知識がなくてもGoogleスプレッドシートを更新するだけで、HPが自動更新される」** 仕組みで構築されています。
+本システムは、**「エンジニアでなくてもGoogleスプレッドシートを更新するだけでHPが全自動更新される」** 仕組みで構築されています。
 
 ```
-【データ入力】                      【全自動データ連携】                   【本番HP表示】
-Googleスプレッドシート   ─────────>   Google Apps Script (GAS)  ─────────>  Vercel (Next.js)
-・加盟店一覧                        ・JSONデータ配信 API                  ・jmdf-vercel.app
-・お知らせ・ニュース                   ・Instagram投稿全自動収集 (Apify)     ・高速＆レスポンシブ
+【入力 / 運用】                      【自動処理 / データ配信】                【フロントエンド表示】
+Googleスプレッドシート ──────────────> Google Apps Script (GAS) ────────────> Vercel (Next.js 14)
+・Members (加盟店名簿)                 ・Code.gs (JSON API配信)              ・jmdf-vercel.app
+・News (手動お知らせ)                  ・fetchApifyInstagram.gs              ・ISR/SSR ハイブリッド表示
+・Instagram_Data (自動蓄積)           ・定期トリガー(日次スクレイピング)    ・スマホ用ハンバーガー対応
+                                               │
+                                               ▼
+                                      Apify API (Scraper)
+                                      ・Instagram最新投稿3件取得
 ```
 
-### 🔑 主要サービス・アカウント一覧
+---
 
-| サービス名 | 用途 | ログイン方法 / 管理場所 |
-| :--- | :--- | :--- |
-| **Google スプレッドシート** | 加盟店・ニュースの日常データ管理 | Googleアカウント（岡崎葵メダカ管理用） |
-| **Google Apps Script (GAS)** | データ配信API・Instagram自動収集 | スプレッドシートの「拡張機能」>「Apps Script」 |
-| **GitHub** | ソースコードの保管庫 | アカウント: `kotugai-hub`<br>リポジトリ: `jmdf-vercel`, `medaka` |
-| **Vercel** | Webサイトの自動公開・ホスティング | GitHubアカウント連携（`jmdf-vercel`） |
-| **Apify** | Instagram最新投稿の全自動スクレイピング | [Apify Console](https://console.apify.com/) |
+## 2. Google Apps Script (GAS) バックエンド完全仕様
+
+GASはスプレッドシートの裏側で動くバックエンドプログラムです。スプレッドシートメニューの **「拡張機能」>「Apps Script」** からアクセスできます。
+
+### 📁 プログラム構成ファイル
+
+1. **`Code.gs`** (Web APIおよびデータ取得ロジック)
+2. **`fetchApifyInstagram.gs`** (Apify API連携・Instagram全自動スクレイピング・データ蓄積)
 
 ---
 
-## 2. 日常の運営手順（スプレッドシートの編集方法）
+### ⚙️ `Code.gs` の主要関数と仕様
 
-管理者は**Googleスプレッドシートを編集するだけ**でHP上の全情報を更新できます。
-
-### 📄 シート①：`Members`（加盟店一覧の管理）
-
-| 列名 | 入力内容例 | 説明・補足 |
+| 関数名 | 役割 / 処理内容 | 戻り値 / 出力 |
 | :--- | :--- | :--- |
-| **`ShopName`** | `岡崎葵メダカ` / `京めだか` | 屋号名（店舗名）を入力します。 |
-| **`Status`** | `Active` | **`Active`** と入力されている店舗のみHPへ表示されます。 |
-| **`Category`** | `正会員` / `準会員` / `賛助会員` | 表示される区分を指定します。 |
-| **`Representative`**| `大場 伸一` | 代表者名を入力します（賛助会員は非表示）。 |
-| **`Role`** | `代表理事` / `理事` / `監事` | 役職名を入力します。空欄の場合は役職なしとなります。 |
-| **`Website`** | `https://aoimedaka.ocnk.net/` | 公式HPやLinktreeのURL。入力すると🏠アイコンが表示。 |
-| **`Instagram`** | `https://www.instagram.com/okazakiaoi/` | メインInstagram。入力すると📷アイコンが表示。 |
-| **`Instagram2`** | `https://www.instagram.com/sub_account/` | **サブInstagram**。入力すると「2」付き📷アイコンが表示。 |
-| **`Auction`** | `https://auctions.yahoo.co.jp/seller/...` | **ヤフオク等**。入力すると🔨オークションアイコンが表示。 |
-| **`X`** | `https://x.com/username` | X(旧Twitter)。入力すると黒アイコンが表示。 |
-| **`Blog`** | `https://ameblo.jp/username/` | ブログ。入力すると📝緑アイコンが表示。 |
-| **`MEDAICHI`** | `〇` または `TRUE` | 入力すると **「MEDAICHI」** ブランドバッジが表示されます。 |
+| **`doGet(e)`** | WebAppアクセス時のエントリーポイント。<br>`?api=data` パラメータが渡された場合、全データをJSONで返却します。 | JSONレスポンス (`globalNews`, `memberNews`, `businessPlan`, `members`, `memberLogos`) |
+| **`getMembers()`** | `Members` シートからデータを行単位でオブジェクト化。`Status` が `Active` の店舗のみ抽出します。 | 加盟店配列オブジェクト |
+| **`getMemberNews()`** | `News` シートおよび `Instagram_Data` シートの投稿を日付降順（新しい順）で結合・ソートして返却します。 | ニュース配列オブジェクト |
+| **`addRequestedMembers()`** | 新規加盟店の初期データを一括生成するメンテナンスタスク関数。 | なし |
+
+#### 🌐 APIレスポンスURL仕様
+* **APIエンドポイント**: スプレッドシートに紐づくGAS WebAppの公開URL
+* **リクエスト例**: `https://script.google.com/macros/s/AKfycb.../exec?api=data`
 
 ---
 
-### 📄 シート②：`News`（お知らせ・活動情報の管理）
+### ⚙️ `fetchApifyInstagram.gs` の主要関数と仕様
 
-「加盟店の最新の活動」セクションに表示されるニュース項目です。
+Instagramからの最新投稿取得およびApifyサービスとの通信を担当します。
 
-| 列名 | 説明 |
+#### ① `getApifyToken()`
+* スクリプトプロパティから Apify API トークンを取得します。
+* 取得キー: `APIFY_API_TOKEN`
+
+#### ② `syncInstagramUsernames()`
+* `Members` シートの `Instagram` 列から各店舗のURLを読み込み、正規表現 `/instagram\.com\/([a-zA-Z0-9_\.]+)\/?/` を用いてユーザー名を自動抽出します。
+* 不要な予約語（`p`, `reel`, `tv` 等）を自動除外します。
+* 重複を削除（`[...new Set(usernames)]`）し、**`Config` シート** の A列へ一覧を出力します。
+
+#### ③ `fetchInstagramViaApify()`
+* `Config` シートに登録された全ユーザー名を取得。
+* 重複URLによるApify側の 400 Bad Request エラーを回避するため、`[...new Set(rawUsernames)]` でリストを事前に完全重複排除します。
+* Apifyの Actor `apify~instagram-scraper` のエンドポイント（`https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items`）へPOSTリクエストを送信します。
+* 各アカウントの最新3件の投稿（画像URL、キャプション、投稿ID、いいね数、投稿日時）を取得し、`saveToInstagramDataSheet()` へ渡します。
+
+#### ④ `saveToInstagramDataSheet(items)`
+* 取得したデータを **`Instagram_Data` シート** へ一括保存します。
+* **重複ガード機能**: 既存の `投稿ID` を `Set` オブジェクトでメモリ保持し、既に保存済みの投稿はスキップして新規投稿のみを最下行へ追記（`setValues`）します。
+
+#### ⑤ `setupDailyInstagramTrigger()`
+* GASの「時間主導型トリガー」をプログラムから自動生成します。
+* 既存の同名トリガーを自動削除した上で、**毎日深夜2時〜3時** に `fetchInstagramViaApify` を定期実行するトリガーを登録します。
+
+---
+
+### 🔑 スクリプトプロパティの設置方法
+1. GASエディタ画面の左メニュー **「プロジェクトの設定（歯車アイコン）」** をクリック。
+2. 画面最下部の **「スクリプト プロパティ」** の「スクリプト プロパティを追加」をクリック。
+3. **プロパティ**: `APIFY_API_TOKEN`
+4. **値**: Apify Console（`console.apify.com`）の「Settings > Integrations > API Token」からコピーした文字列を貼り付けて保存。
+
+---
+
+## 3. Google スプレッドシート データベース構造
+
+データ管理用のGoogleスプレッドシート（`JMDF_加盟店・ニュース管理`）内のシート構造と各列の完全定義です。
+
+### 📄 シート1：`Members`（加盟店名簿マスター）
+
+| 列名（ヘッダー） | 型 | 説明 | 必須 |
+| :--- | :---: | :--- | :---: |
+| **`ShopName`** | 文字列 | 屋号名（例: `岡崎葵メダカ`, `京めだか`） | **必須** |
+| **`Status`** | 文字列 | **`Active`** と入力されている店舗のみHPに表示されます。 | **必須** |
+| **`Category`** | 文字列 | **`正会員`** / **`準会員`** / **`賛助会員`** のいずれか | **必須** |
+| **`Representative`**| 文字列 | 代表者氏名（賛助会員カードでは非表示） | 任意 |
+| **`Role`** | 文字列 | 役職名（例: `代表理事`, `副代表理事`, `理事`, `監事`） | 任意 |
+| **`Website`** | URL | 公式サイト / Linktree 等のURL。入力で 🏠 アイコン表示 | 任意 |
+| **`Instagram`** | URL | メインInstagramアカウントURL。入力で 📷 アイコン表示 | 任意 |
+| **`Instagram2`** | URL | **サブInstagram**URL。入力で 「2」付き 📷 アイコン表示 | 任意 |
+| **`Auction`** | URL | **ヤフオク等**オークションURL。入力で 🔨 アイコン表示 | 任意 |
+| **`X`** | URL | X (旧Twitter) アカウントURL。入力で 🐦 アイコン表示 | 任意 |
+| **`Blog`** | URL | ブログ / note アカウントURL。入力で 📝 アイコン表示 | 任意 |
+| **`MEDAICHI`** | フラグ | **`〇`** または **`TRUE`** で note解説記事への直リンクバッジを表示 | 任意 |
+| **`LogoURL`** | URL | 独自の店舗ロゴ画像直リンクURL（未指定時は自動フォールバック） | 任意 |
+
+---
+
+### 📄 シート2：`News`（お知らせ・活動投稿）
+
+| 列名（ヘッダー） | 説明 |
 | :--- | :--- |
-| **`Title`** | お知らせのタイトル（例: `秋のメダカ展示即売会を開催いたします`） |
+| **`Title`** | お知らせのタイトル |
 | **`Date`** | 投稿日時（例: `2026-08-01`） |
-| **`Category`** | `お知らせ` / `イベント` / `写真` / `動画` |
-| **`URL`** | リンク先URL（Instagram投稿リンクやブログ記事リンク） |
-| **`Thumbnail`** | サムネイル画像URL（空欄の場合は標準バッジが自動適用） |
-| **`Source`** | `Manual`（手動投稿） / `Instagram`（自動取得） |
-
-> 💡 **自動取得機能**:
-> GASのプログラム（`fetchInstagramViaApify`）が定期実行され、各加盟店の最新Instagram投稿が自動的に `News` シートへ追記されます。
+| **`Category`** | `お知らせ`, `イベント`, `写真`, `動画` |
+| **`URL`** | クリック時の遷移先URL |
+| **`Thumbnail`** | サムネイル画像URL（未指定時はグラデーションバッジが適用） |
+| **`Source`** | `Manual`（手動投稿） / `Instagram`（自動収集） |
 
 ---
 
-## 3. ロゴ画像の追加・変更手順
+### 📄 シート3：`Instagram_Data`（Apify自動蓄積用）
 
-新しく加盟店が増えた場合、または店舗ロゴが新しくなった場合の更新手順です。
-
-1. **GitHubリポジトリへ追加する場合**:
-   * 画像ファイルを `public/logos/logo_店舗識別名.png` (または `.jpg`) として配置。
-   * `src/app/page.tsx` 内の `knownLogos` マッピングに店舗名を追加。
-
-2. **スプレッドシートから画像URLを指定する場合**:
-   * `Members` シートに `LogoURL` 列を作成し、画像の直リンクURL（例: `https://.../logo.jpg`）を貼るだけで自動適用されます。
+Apifyスクレイパーが自動的に投稿データを保存するシートです。手動編集は不要です。
+* 列構成: `ユーザー名`, `投稿ID`, `メディア種別`, `キャプション`, `いいね数`, `コメント数`, `投稿日時(UTC)`, `URL`, `サムネイルURL`, `取得日時`
 
 ---
 
-## 4. 自動更新スクリプト（GAS）の管理
+## 4. Next.js フロントエンド（Vercel）構造と表示ロジック
 
-スプレッドシートの「拡張機能」>「Apps Script」からプログラムを管理できます。
+Webサイト本体は Next.js 14 (App Router) で構築されており、`jmdf-vercel` リポジトリで管理されています。
 
-### ⚙️ 主要なスクリプトファイル
-* **`Code.gs`**: スプレッドシートのデータをWebサイトへ送るAPIエンドポイント（`doGet()`）。
-* **`fetchApifyInstagram.gs`**: Apifyサービスを使って加盟店のInstagram投稿を全自動収集するプログラム。
+### 📁 ディレクトリ構造
 
-### ⏱️ 定期実行トリガー（自動実行の設定）
-1. GAS画面左側の **時計アイコン（トリガー）** を開きます。
-2. 以下の設定になっているか確認します：
-   * **実行する関数**: `fetchInstagramViaApify`
-   * **イベントのソース**: 時間主導型（12時間おき、または1日1回）
-
----
-
-## 5. トラブルシューティング（困ったときのQ&A）
-
-### Q1. スプレッドシートを更新したのにHPに反映されない
-* **原因**: ブラウザのキャッシュ、またはVercelの静的ビルド。
-* **対処**: 数分待ってからページを再読み込み（Ctrl + F5 または Shift + リロード）してください。
-
-### Q2. Instagramの最新投稿が自動取得されない
-* **原因**: ApifyのAPIトークン切れ、またはApifyの無料利用枠超過。
-* **対処**:
-  1. GASの `fetchApifyInstagram.gs` 内で `APIFY_API_TOKEN` が正しく設定されているか確認。
-  2. Apifyダッシュボード（`console.apify.com`）でエラーログを確認。
-
-### Q3. スマホで見たときにメニューが出ない
-* **対処**: ヘッダー右上に「メニュー」ボタン（ハンバーガーボタン）が常時配置されています。タップすると極大文字の全画面メニューが開きます。
+```
+jmdf-vercel/
+├── src/
+│   └── app/
+│       ├── page.tsx            # メインLP画面 (全セクションコンポーネント)
+│       ├── Header.tsx          # ヘッダー＆スマホ用ハンバーガーメニュー (Client Component)
+│       ├── ActivityThumb.tsx   # Instagramサムネイル・403回避・プロキシ処理 (Client Component)
+│       ├── globals.css         # 全体CSSデザイン・3D演出・レスポンシブメディアクエリ
+│       └── gallery.json        # ギャラリー用画像リスト
+├── public/
+│   ├── logos/                  # 店舗公式ロゴ画像 (.png / .jpg)
+│   └── images/                 # 3Dグラスモフィズム画像 (promise_camera.jpg 等)
+└── HANDOVER.md                 # プロジェクト内本マニュアル
+```
 
 ---
 
-## 6. 後任者への引き継ぎチェックリスト
+### 💡 主要コンポーネントと表示ロジック
 
-- [ ] Googleスプレッドシートの「編集権限」を後任者のGoogleアカウントへ譲渡
-- [ ] GitHubアカウント（またはリポジトリへの招待）の引き継ぎ
-- [ ] Vercelプロジェクトの共有・権限追加
-- [ ] Apifyアカウント（またはAPIキー）の共有
-- [ ] 本マニュアル（`handover_manual.md`）の共有とテスト更新の実施
+#### 1. `Header.tsx` (スマホ対応ハンバーガーメニュー)
+* 画面幅 `768px` 以下で **54px × 54px の押しやすいハンバーガーボタン**（三本線＋「メニュー」文字）が表示されます。
+* ボタンタップで画面上部から **1.3remの極大文字** を使ったドロワーメニュー（`mobile-menu-overlay`）がスライドダウン表示されます。
+* 各メニュー選択時、自動的にメニューが閉じてスムーズスクロール移動します。
+
+#### 2. `ActivityThumb.tsx` (Instagram画像の直リンクブロック403回避)
+* InstagramのCDN画像（`scontent-*.cdninstagram.com`, `*.fbcdn.net`）は、外部Webサイトに直接埋め込むと Meta側で **403 Forbidden（アクセス拒否）** エラーとなります。
+* **解決ロジック**:
+  1. `<img referrerPolicy="no-referrer" />` を付与し、呼び出し元ヘッダーを隠蔽。
+  2. 高速画像配信プロキシ `https://wsrv.nl/?url=${encodeURIComponent(url)}` を経由して読み込み。
+  3. 万が一画像が切れている場合は `onError` で綺麗なInstagramグラデーションバッジに自動切替。
+
+#### 3. `page.tsx` 内のフォールバックマッピング辞書
+* **`officialRoles`**: スプレッドシートで役職が空欄の場合でも、公式名簿に基づき役職を自動表示（岡崎葵メダカ: 代表理事, 京めだか: 副代表理事, 美夜古/都/チョモ/エムリンク/桃ちゃん: 理事, ぼっけー/ぼっけぇ: 監事）。
+* **`knownLogos`**: `/logos/logo_okazaki.png`, `/logos/logo_shizuka.jpg`, `/logos/logo_living.jpg` などの店舗ロゴ画像を自動マッピング。
+* **Microlink API**: 画像未受領店舗は `api.microlink.io/?url=https://www.instagram.com/${username}&embed=image.url` から実際のInstagramプロフィールアイコンをリアルタイム取得。
+* **`isMedaichi`**: `MEDAICHI` 列が `〇` または `TRUE` の加盟店に `MEDAICHI` note解説記事（`https://note.com/medaichi/n/n0166e73079c3`）への直リンクバッジを表示。
+
+---
+
+## 5. 後任者への引き継ぎ・移行完全手順
+
+後任者の方が運用・開発を引き継ぐ際の一連のステップです。
+
+### ステップ 1: スプレッドシートの権限譲渡
+1. スプレッドシート右上 **「共有」** ボタンをクリック。
+2. 後任者のGoogleアカウントを追加し、**「オーナー権限を譲渡」** を選択。
+
+### ステップ 2: GASスクリプトプロパティとトリガーの再設定
+1. スプレッドシートの「拡張機能」>「Apps Script」を開く。
+2. 「プロジェクトの設定（歯車）」>「スクリプト プロパティ」で `APIFY_API_TOKEN` に後任者のApify APIキーをセット。
+3. エディタで `setupDailyInstagramTrigger` を開き、「実行」をクリックして日次トリガーを有効化。
+
+### ステップ 3: GitHubおよびVercel権限の移管
+1. GitHubの `kotugai-hub/jmdf-vercel` リポジトリの設定（Settings > Collaborators）から後任者を招待し、Admin権限を付与。
+2. Vercelダッシュボード（`vercel.com`）の「Project Settings > Members」から後任者を招待。
+
+### ステップ 4: コード修正・開発のフロー（エンジニア向け）
+```bash
+# 1. リポジトリのクローン
+git clone https://github.com/kotugai-hub/jmdf-vercel.git
+cd jmdf-vercel
+
+# 2. 依存パッケージのインストール
+npm install
+
+# 3. ローカル開発サーバー起動
+npm run dev
+
+# 4. ビルドテスト（エラーチェック必須）
+npm run build
+
+# 5. 変更のコミットとデプロイ（Vercelへ自動デプロイされます）
+git add .
+git commit -m "Update feature..."
+git push origin main
+```
+
+---
+
+## 6. 緊急時トラブルシューティングガイド
+
+| 現象・エラー | 考えられる原因 | 解決手順 |
+| :--- | :--- | :--- |
+| **スプレッドシートの変更がHPに反映されない** | キャッシュまたはVercelビルド未反映 | 1. 5分程度待ってブラウザをスーパーリロード（`Ctrl + Shift + R`）。<br>2. Vercelダッシュボードで Deployments ログを確認。 |
+| **GASで `APIエラー: 400 invalid-input` が発生** | Apifyに送信する `directUrls` に重複URLが含まれている | `fetchApifyInstagram.gs` 内で `[...new Set(rawUsernames)]` が正しく実行されているか確認してください。 |
+| **Instagramの写真が画像切れ（崩れ）になる** | Meta側のCDNリンク有効期限切れ | `ActivityThumb.tsx` の `wsrv.nl` プロキシおよび `referrerPolicy="no-referrer"` が正しく機能しているか確認。 |
+| **特定店舗が加盟店一覧に表示されない** | スプレッドシートの `Status` 列の誤り | `Members` シートの `Status` 列が正確に半角英字で **`Active`** になっているか確認してください。 |
