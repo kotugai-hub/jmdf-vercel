@@ -474,8 +474,10 @@ export default async function Page() {
                           String(member['メダイチ']) === '〇' ||
                           String(member['メダイチ']).toUpperCase() === 'TRUE' ||
                           String(member['MEDAICHI利用']) === '〇' ||
-                          String(member['MEDAICHI利用']).toUpperCase() === 'TRUE' ||
-                          shopName === '岡崎葵メダカ';
+                          String(member['MEDAICHI利用']).toUpperCase() === 'TRUE';
+
+                        const medaichiRaw = member.MEDAICHI || member['メダイチ'] || member['MEDAICHI利用'] || '';
+                        const medaichiUrl = typeof medaichiRaw === 'string' && medaichiRaw.startsWith('http') ? medaichiRaw : null;
 
                         return (
                           <div key={idx} className="member-card">
@@ -505,29 +507,7 @@ export default async function Page() {
                                 </div>
                               )}
                               <div className="member-header-info">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                                  <h3 style={{ margin: 0 }}>{shopName}</h3>
-                                  {isMedaichi && (
-                                    <span
-                                      style={{
-                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
-                                        color: '#ffffff',
-                                        padding: '3px 8px',
-                                        borderRadius: '12px',
-                                        fontSize: '0.72rem',
-                                        fontWeight: 'bold',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '3px',
-                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
-                                        letterSpacing: '0.3px'
-                                      }}
-                                      title="MEDAICHI 導入加盟店"
-                                    >
-                                      <i className="fa-solid fa-gem" style={{ fontSize: '0.65rem' }}></i> MEDAICHI
-                                    </span>
-                                  )}
-                                </div>
+                                <h3>{shopName}</h3>
                                 {cat.name !== '賛助会員' && representative && (
                                   <div style={{ fontSize: '0.9rem', color: 'var(--text-color)', marginTop: '4px', marginBottom: '4px' }}>
                                     代表: <strong>{representative}</strong>
@@ -541,7 +521,7 @@ export default async function Page() {
                               </div>
                             </div>
                             <div className="member-footer" style={{ paddingTop: '15px', borderTop: '1px solid #eee' }}>
-                              <div className="sns-links" style={{ marginTop: 0, flexWrap: 'wrap' }}>
+                              <div className="sns-links" style={{ marginTop: 0, flexWrap: 'wrap', alignItems: 'center' }}>
                                 {(member.Website || member['Website'] || member['HP'] || member['ウェブサイト']) && (
                                   <a href={member.Website || member['Website'] || member['HP'] || member['ウェブサイト']} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト"><i className="fa-solid fa-house"></i></a>
                                 )}
@@ -562,6 +542,56 @@ export default async function Page() {
                                 )}
                                 {(member.Blog || member['Blog'] || member['ブログ']) && (
                                   <a href={member.Blog || member['Blog'] || member['ブログ']} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
+                                )}
+                                {isMedaichi && (
+                                  medaichiUrl ? (
+                                    <a
+                                      href={medaichiUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="sns-link sns-medaichi"
+                                      title="MEDAICHI加盟店"
+                                      style={{
+                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
+                                        color: '#ffffff',
+                                        padding: '0 12px',
+                                        width: 'auto',
+                                        borderRadius: '20px',
+                                        fontSize: '0.78rem',
+                                        fontWeight: 'bold',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
+                                        textDecoration: 'none',
+                                        height: '38px'
+                                      }}
+                                    >
+                                      <i className="fa-solid fa-gem" style={{ fontSize: '0.75rem' }}></i> MEDAICHI
+                                    </a>
+                                  ) : (
+                                    <span
+                                      className="sns-link sns-medaichi"
+                                      title="MEDAICHI加盟店"
+                                      style={{
+                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
+                                        color: '#ffffff',
+                                        padding: '0 12px',
+                                        width: 'auto',
+                                        borderRadius: '20px',
+                                        fontSize: '0.78rem',
+                                        fontWeight: 'bold',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
+                                        cursor: 'default',
+                                        height: '38px'
+                                      }}
+                                    >
+                                      <i className="fa-solid fa-gem" style={{ fontSize: '0.75rem' }}></i> MEDAICHI
+                                    </span>
+                                  )
                                 )}
                               </div>
                             </div>
