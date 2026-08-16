@@ -16,27 +16,21 @@ export default function ActivityThumb({ item }: { item: Record<string, string> }
   if (item.Category === '動画') icon = '▶️';
   if (isInstagram) icon = '📷';
 
-  // Determine best thumbnail URL
-  let targetSrc = '';
-  if (item.URL && item.URL.includes('instagram.com/')) {
-    const match = item.URL.match(/instagram\.com\/(?:p|reel)\/([a-zA-Z0-9_\-]+)/);
-    if (match && match[1]) {
-      targetSrc = `https://www.instagram.com/p/${match[1]}/media/?size=m`;
-    }
-  }
+  // Only use direct non-Instagram image thumbnails (e.g. blogs / youtube)
+  const isDirectImage =
+    item.Thumbnail &&
+    item.Thumbnail.trim() !== '' &&
+    !item.Thumbnail.includes('instagram.com/p/') &&
+    !item.Thumbnail.includes('cdninstagram.com') &&
+    !item.Thumbnail.includes('fbcdn.net') &&
+    !imgError;
 
-  if (!targetSrc && item.Thumbnail && item.Thumbnail.trim() !== '') {
-    targetSrc = item.Thumbnail;
-  }
-
-  const hasImage = targetSrc && !imgError;
-
-  if (hasImage) {
+  if (isDirectImage) {
     return (
-      <div className="activity-thumb" style={{ overflow: 'hidden', padding: 0, position: 'relative', width: '100%', height: '100%', background: '#f5f5f5' }}>
+      <div className="activity-thumb" style={{ overflow: 'hidden', padding: 0 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={targetSrc}
+          src={item.Thumbnail}
           alt={item.Title || 'サムネイル'}
           referrerPolicy="no-referrer"
           loading="lazy"
@@ -63,7 +57,7 @@ export default function ActivityThumb({ item }: { item: Record<string, string> }
           gap: '6px'
         }}
       >
-        <i className="fa-brands fa-instagram" style={{ fontSize: '3rem', color: '#ffffff' }}></i>
+        <i className="fa-brands fa-instagram" style={{ fontSize: '2.5rem', color: '#ffffff' }}></i>
         <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#ffffff', letterSpacing: '0.5px' }}>
           Instagram
         </span>
@@ -72,9 +66,22 @@ export default function ActivityThumb({ item }: { item: Record<string, string> }
   }
 
   return (
-    <div className="activity-thumb">
-      <span>
-        {icon} {item.Category}
+    <div
+      className="activity-thumb"
+      style={{
+        background: 'linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%)',
+        color: 'var(--primary-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '10px',
+        fontSize: '2.2rem'
+      }}
+    >
+      <span>{icon}</span>
+      <span style={{ fontSize: '0.8rem', fontWeight: 'bold', marginTop: '5px' }}>
+        {item.Category || 'お知らせ'}
       </span>
     </div>
   );

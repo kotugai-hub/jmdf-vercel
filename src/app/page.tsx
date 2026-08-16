@@ -222,7 +222,15 @@ export default function Page() {
                     <li key={idx} className="news-item">
                       <span className="news-date">{news.Date}</span>
                       <span className={`news-badge ${badgeClass}`}>{news.Category}</span>
-                      <a href={news.URL || '#'} className="news-title" target="_blank" rel="noreferrer">{news.Title}</a>
+                      {news.URL && news.URL.trim() !== '' && news.URL !== '#' ? (
+                        <a href={news.URL} className="news-title" target="_blank" rel="noreferrer" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>
+                          {news.Title}
+                        </a>
+                      ) : (
+                        <span className="news-title" style={{ color: 'var(--text-color)', cursor: 'default' }}>
+                          {news.Title}
+                        </span>
+                      )}
                     </li>
                   );
                 })
