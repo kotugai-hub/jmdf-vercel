@@ -16,14 +16,27 @@ export default function ActivityThumb({ item }: { item: Record<string, string> }
   if (item.Category === '動画') icon = '▶️';
   if (isInstagram) icon = '📷';
 
-  const hasImage = item.Thumbnail && item.Thumbnail.trim() !== '' && !imgError;
+  // Determine best thumbnail URL
+  let targetSrc = '';
+  if (item.URL && item.URL.includes('instagram.com/')) {
+    const match = item.URL.match(/instagram\.com\/(?:p|reel)\/([a-zA-Z0-9_\-]+)/);
+    if (match && match[1]) {
+      targetSrc = `https://www.instagram.com/p/${match[1]}/media/?size=m`;
+    }
+  }
+
+  if (!targetSrc && item.Thumbnail && item.Thumbnail.trim() !== '') {
+    targetSrc = item.Thumbnail;
+  }
+
+  const hasImage = targetSrc && !imgError;
 
   if (hasImage) {
     return (
-      <div className="activity-thumb" style={{ overflow: 'hidden', padding: 0 }}>
+      <div className="activity-thumb" style={{ overflow: 'hidden', padding: 0, position: 'relative', width: '100%', height: '100%', background: '#f5f5f5' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={item.Thumbnail}
+          src={targetSrc}
           alt={item.Title || 'サムネイル'}
           referrerPolicy="no-referrer"
           loading="lazy"
