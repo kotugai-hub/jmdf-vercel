@@ -105,24 +105,84 @@ export default function Page() {
     return '';
   };
 
+  const getShopLinks = (shopName: string, member: Record<string, string>) => {
+    const s = (shopName || '').replace(/[\s（）\(\)・\-_]/g, '').toLowerCase();
+
+    // 1. たかちゃん = リンク不要
+    if (s.includes('たかちゃん') || s.includes('takachan')) {
+      return {};
+    }
+    // 2. 奥羽めだか = リンク不要
+    if (s.includes('奥羽') || s.includes('oumedaka')) {
+      return {};
+    }
+    // 3. リビングめだか = https://linktr.ee/livingmedaka
+    if (s.includes('リビング') || s.includes('living')) {
+      return {
+        Website: 'https://linktr.ee/livingmedaka'
+      };
+    }
+    // 4. 曼殊沙華めだか = インスタのみ https://linktr.ee/manjyusyagemedaka
+    if (s.includes('曼珠沙華') || s.includes('曼殊沙華') || s.includes('manjushage') || s.includes('manjyusyage')) {
+      return {
+        Instagram: 'https://linktr.ee/manjyusyagemedaka'
+      };
+    }
+    // 5. パズルピース = インスタのみ https://www.instagram.com/dai55555dai/
+    if (s.includes('パズル') || s.includes('puzzle')) {
+      return {
+        Instagram: 'https://www.instagram.com/dai55555dai/'
+      };
+    }
+    // 6. SHI-KAちゃんメダカ / 静めだか = インスタのみ https://www.instagram.com/shika_medaka_chan/
+    if (s.includes('shika') || s.includes('シカ') || s.includes('静めだか') || s.includes('静')) {
+      return {
+        Instagram: 'https://www.instagram.com/shika_medaka_chan/'
+      };
+    }
+    // 7. NOBUめだか / 修(nobu)めだか = インスタのみ https://www.instagram.com/medaka_nobu/
+    if (s.includes('nobu') || s.includes('修') || s.includes('ノブ')) {
+      return {
+        Instagram: 'https://www.instagram.com/medaka_nobu/'
+      };
+    }
+    // 8. 植木屋丸ちゃんめだか = インスタのみ https://www.instagram.com/makoto19770416/
+    if (s.includes('植木屋') || s.includes('丸ちゃん') || s.includes('makoto')) {
+      return {
+        Instagram: 'https://www.instagram.com/makoto19770416/'
+      };
+    }
+
+    // Default links from sheet for other members
+    return {
+      Website: member.Website || member['Website'] || member['HP'] || member['ウェブサイト'] || '',
+      Instagram: member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || member['Instagram_1'] || member['Instagram1'] || '',
+      Instagram2: member.Instagram2 || member['Instagram2'] || member['Instagram_2'] || member['インスタグラム2'] || member['インスタ2'] || member['サブインスタ'] || '',
+      Auction: member.Auction || member['Auction'] || member['Yahoo'] || member['YahooAuction'] || member['ヤフオク'] || member['オークション'] || member['オークションURL'] || '',
+      X: member.X || member['X'] || member['Twitter'] || member['ツイッター'] || '',
+      Blog: member.Blog || member['Blog'] || member['ブログ'] || '',
+      MEDAICHI: member.MEDAICHI || member['メダイチ'] || member['MEDAICHI利用'] || ''
+    };
+  };
+
   const defaultSeiMembers: Record<string, string>[] = [
-    { ShopName: '岡崎葵メダカ', Category: '正会員', Representative: '天野 雅弘', Role: '代表理事', Instagram: '' },
-    { ShopName: '京めだか', Category: '正会員', Representative: '', Role: '副代表理事', Instagram: 'https://www.instagram.com/kyomedaka075/' },
-    { ShopName: '美夜古めだか', Category: '正会員', Representative: '', Role: '理事', Instagram: '' },
-    { ShopName: 'メダカチョモランマ', Category: '正会員', Representative: '姫野 代表', Role: '理事', Instagram: '' },
-    { ShopName: 'エムリンク', Category: '正会員', Representative: '', Role: '理事', Instagram: '' },
-    { ShopName: '桃ちゃんめだか', Category: '正会員', Representative: '', Role: '理事', Instagram: '' },
-    { ShopName: 'ぼっけーめだか', Category: '正会員', Representative: '', Role: '監事', Instagram: '' },
-    { ShopName: 'リビングめだか', Category: '正会員', Representative: '', Role: '広報・スポンサー・協賛関連', Instagram: 'https://www.instagram.com/livingmedaka/' }
+    { ShopName: '岡崎葵メダカ', Category: '正会員', Representative: '天野 雅弘', Role: '代表理事', Instagram: 'https://www.instagram.com/aoimedaka1', Website: 'https://aoimedaka.ocnk.net/', Blog: 'http://blog.livedoor.jp/aoimedaka/' },
+    { ShopName: '京めだか', Category: '正会員', Representative: '', Role: '副代表理事', Instagram: 'https://www.instagram.com/kyomedaka075/', Auction: 'https://auctions.yahoo.co.jp/seller/4iESPc3f2RkE9mGsspEhoLrKgeCjx?user_type=c', MEDAICHI: '1' },
+    { ShopName: '美夜古めだか', Category: '正会員', Representative: '', Role: '理事', Instagram: 'https://www.instagram.com/miyako3966', Website: 'https://www.miyako-medaka.com/' },
+    { ShopName: 'メダカチョモランマ', Category: '正会員', Representative: '姫野 代表', Role: '理事', Instagram: 'https://www.instagram.com/cyomoranma_medaka/', Auction: 'https://auctions.yahoo.co.jp/seller/CDsMwgHt4pJJu3xea38PiEGKD2QY4', X: 'https://twitter.com/cyomoranma0123' },
+    { ShopName: 'エムリンク', Category: '正会員', Representative: '', Role: '理事', Instagram: 'https://www.instagram.com/mlink_etajima' },
+    { ShopName: '桃ちゃんめだか', Category: '正会員', Representative: '', Role: '理事', Instagram: 'https://instagram.com/momochanmedaka', MEDAICHI: '1' },
+    { ShopName: 'ぼっけーめだか', Category: '正会員', Representative: '', Role: '監事', Instagram: 'https://www.instagram.com/bokkeimedaka/', Auction: 'https://auctions.yahoo.co.jp/seller/77x4Hxq28WKLdYwMkrqqA2LNZbpkg?user_type=c' },
+    { ShopName: 'リビングめだか', Category: '正会員', Representative: '', Role: '広報・スポンサー・協賛関連', Website: 'https://linktr.ee/livingmedaka' }
   ];
 
   const defaultJunMembers: Record<string, string>[] = [
-    { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
-    { ShopName: 'パズルピースめだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
-    { ShopName: '静めだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/livingmedaka/', Website: '' },
-    { ShopName: '修(nobu)めだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
-    { ShopName: '曼珠沙華めだか', Category: '準会員', Role: '', Instagram: '', Website: '' },
-    { ShopName: 'クライムメダカ', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/climbyk54/', Website: 'https://linktr.ee/climbyk54' },
+    { ShopName: '植木屋丸ちゃんめだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/makoto19770416/', Website: '' },
+    { ShopName: 'パズルピースめだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/dai55555dai/', Website: '' },
+    { ShopName: '静めだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/shika_medaka_chan/', Website: '' },
+    { ShopName: '修(nobu)めだか', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/medaka_nobu/', Website: '' },
+    { ShopName: '曼珠沙華めだか', Category: '準会員', Role: '', Instagram: 'https://linktr.ee/manjyusyagemedaka', Website: '' },
+    { ShopName: 'クライムメダカ', Category: '準会員', Role: '', Instagram: 'https://www.instagram.com/climbmedaka2/', Auction: 'https://auctions.yahoo.co.jp/seller/587sEyMr7pPAVRTAaQSpWz3hymiZz', Website: '' },
     { ShopName: '奥羽めだか', Category: '準会員', Role: '', Instagram: '', Website: '' }
   ];
 
@@ -604,6 +664,17 @@ export default function Page() {
                         const medaichiRaw = member.MEDAICHI || member['メダイチ'] || member['MEDAICHI利用'] || '';
                         const medaichiUrl = typeof medaichiRaw === 'string' && medaichiRaw.startsWith('http') ? medaichiRaw : null;
 
+                        const links = getShopLinks(shopName, member);
+                        const hasAnyLinks = Boolean(
+                          links.Website ||
+                          links.Instagram ||
+                          links.Instagram2 ||
+                          links.Auction ||
+                          links.X ||
+                          links.Blog ||
+                          (isMedaichi && links.MEDAICHI && String(links.MEDAICHI) !== '0')
+                        );
+
                         return (
                           <div key={idx} className="member-card">
                             <div className="member-header">
@@ -660,58 +731,60 @@ export default function Page() {
                                 )}
                               </div>
                             </div>
-                            <div className="member-footer" style={{ paddingTop: '15px', borderTop: '1px solid #eee' }}>
-                              <div className="sns-links" style={{ marginTop: 0, flexWrap: 'wrap', alignItems: 'center' }}>
-                                {(member.Website || member['Website'] || member['HP'] || member['ウェブサイト']) && (
-                                  <a href={member.Website || member['Website'] || member['HP'] || member['ウェブサイト']} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト"><i className="fa-solid fa-house"></i></a>
-                                )}
-                                {(member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || member['Instagram_1'] || member['Instagram1']) && (
-                                  <a href={member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || member['Instagram_1'] || member['Instagram1']} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram (メイン)"><i className="fa-brands fa-instagram"></i></a>
-                                )}
-                                {(member.Instagram2 || member['Instagram2'] || member['Instagram_2'] || member['インスタグラム2'] || member['インスタ2'] || member['サブインスタ']) && (
-                                  <a href={member.Instagram2 || member['Instagram2'] || member['Instagram_2'] || member['インスタグラム2'] || member['インスタ2'] || member['サブインスタ']} target="_blank" rel="noreferrer" className="sns-link sns-instagram-2" title="Instagram (サブ)">
-                                    <i className="fa-brands fa-instagram"></i>
-                                    <span style={{ position: 'absolute', bottom: '0px', right: '3px', fontSize: '0.6rem', fontWeight: '900', color: '#ffffff', textShadow: '0 0 3px #000' }}>2</span>
-                                  </a>
-                                )}
-                                {(member.Auction || member['Auction'] || member['Yahoo'] || member['YahooAuction'] || member['ヤフオク'] || member['オークション'] || member['オークションURL']) && (
-                                  <a href={member.Auction || member['Auction'] || member['Yahoo'] || member['YahooAuction'] || member['ヤフオク'] || member['オークション'] || member['オークションURL']} target="_blank" rel="noreferrer" className="sns-link sns-auction" title="ヤフオク / オークション"><i className="fa-solid fa-gavel"></i></a>
-                                )}
-                                {(member.X || member['X'] || member['Twitter'] || member['ツイッター']) && (
-                                  <a href={member.X || member['X'] || member['Twitter'] || member['ツイッター']} target="_blank" rel="noreferrer" className="sns-link sns-x" title="X (Twitter)"><i className="fa-brands fa-x-twitter"></i></a>
-                                )}
-                                {(member.Blog || member['Blog'] || member['ブログ']) && (
-                                  <a href={member.Blog || member['Blog'] || member['ブログ']} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
-                                )}
-                                {isMedaichi && (
-                                  <a
-                                    href={medaichiUrl || 'https://note.com/medaichi/n/n0166e73079c3'}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="sns-link sns-medaichi"
-                                    title="MEDAICHI加盟店"
-                                    style={{
-                                      background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
-                                      color: '#ffffff',
-                                      padding: '0 14px',
-                                      width: 'auto',
-                                      borderRadius: '20px',
-                                      fontSize: '0.78rem',
-                                      fontWeight: 'bold',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
-                                      textDecoration: 'none',
-                                      height: '38px',
-                                      letterSpacing: '0.5px'
-                                    }}
-                                  >
-                                    MEDAICHI
-                                  </a>
-                                )}
+                            {hasAnyLinks && (
+                              <div className="member-footer" style={{ paddingTop: '15px', borderTop: '1px solid #eee' }}>
+                                <div className="sns-links" style={{ marginTop: 0, flexWrap: 'wrap', alignItems: 'center' }}>
+                                  {links.Website && (
+                                    <a href={links.Website} target="_blank" rel="noreferrer" className="sns-link sns-website" title="公式サイト / リンク"><i className="fa-solid fa-house"></i></a>
+                                  )}
+                                  {links.Instagram && (
+                                    <a href={links.Instagram} target="_blank" rel="noreferrer" className="sns-link sns-instagram" title="Instagram"><i className="fa-brands fa-instagram"></i></a>
+                                  )}
+                                  {links.Instagram2 && (
+                                    <a href={links.Instagram2} target="_blank" rel="noreferrer" className="sns-link sns-instagram-2" title="Instagram (サブ)">
+                                      <i className="fa-brands fa-instagram"></i>
+                                      <span style={{ position: 'absolute', bottom: '0px', right: '3px', fontSize: '0.6rem', fontWeight: '900', color: '#ffffff', textShadow: '0 0 3px #000' }}>2</span>
+                                    </a>
+                                  )}
+                                  {links.Auction && (
+                                    <a href={links.Auction} target="_blank" rel="noreferrer" className="sns-link sns-auction" title="ヤフオク / オークション"><i className="fa-solid fa-gavel"></i></a>
+                                  )}
+                                  {links.X && (
+                                    <a href={links.X} target="_blank" rel="noreferrer" className="sns-link sns-x" title="X (Twitter)"><i className="fa-brands fa-x-twitter"></i></a>
+                                  )}
+                                  {links.Blog && (
+                                    <a href={links.Blog} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
+                                  )}
+                                  {isMedaichi && links.MEDAICHI && (
+                                    <a
+                                      href={medaichiUrl || 'https://note.com/medaichi/n/n0166e73079c3'}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="sns-link sns-medaichi"
+                                      title="MEDAICHI加盟店"
+                                      style={{
+                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
+                                        color: '#ffffff',
+                                        padding: '0 14px',
+                                        width: 'auto',
+                                        borderRadius: '20px',
+                                        fontSize: '0.78rem',
+                                        fontWeight: 'bold',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
+                                        textDecoration: 'none',
+                                        height: '38px',
+                                        letterSpacing: '0.5px'
+                                      }}
+                                    >
+                                      MEDAICHI
+                                    </a>
+                                  )}
+                                </div>
                               </div>
-                            </div>
+                            )}
                           </div>
                         );
                       })
