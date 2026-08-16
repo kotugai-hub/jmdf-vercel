@@ -19,28 +19,15 @@ export default function ActivityThumb({ item }: { item: Record<string, string> }
   const hasImage = item.Thumbnail && item.Thumbnail.trim() !== '' && !imgError;
 
   if (hasImage) {
-    // Instagram画像CDN直リンクブロック(403)防止のため referrerPolicy="no-referrer" を追加
-    // また画像プロキシ(wsrv.nl)を併用して確実に表示
-    const imgSrc =
-      item.Thumbnail.includes('cdninstagram.com') || item.Thumbnail.includes('fbcdn.net')
-        ? `https://wsrv.nl/?url=${encodeURIComponent(item.Thumbnail)}`
-        : item.Thumbnail;
-
     return (
       <div className="activity-thumb" style={{ overflow: 'hidden', padding: 0 }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={imgSrc}
+          src={item.Thumbnail}
           alt={item.Title || 'サムネイル'}
           referrerPolicy="no-referrer"
-          onError={(e) => {
-            // プロキシ画像も失敗した場合、生URLを最後の手段として試すかエラー表示
-            if (imgSrc !== item.Thumbnail) {
-              (e.target as HTMLImageElement).src = item.Thumbnail;
-            } else {
-              setImgError(true);
-            }
-          }}
+          loading="lazy"
+          onError={() => setImgError(true)}
           style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
         />
       </div>
