@@ -12,7 +12,7 @@
 ```
 【入力 / 運用】                      【自動処理 / データ配信】                【フロントエンド表示】
 Googleスプレッドシート ──────────────> Google Apps Script (GAS) ────────────> Vercel (Next.js 14)
-・Members (加盟店名簿)                 ・Code.gs (JSON API配信)              ・jmdf-vercel.app
+・Members (加盟店名簿)                 ・Code.gs (JSON API配信)              ・jmdf-medaka.com
 ・News (手動お知らせ)                  ・fetchApifyInstagram.gs              ・ISR/SSR ハイブリッド表示
 ・Instagram_Data (自動蓄積)           ・定期トリガー(日次スクレイピング)    ・スマホ用ハンバーガー対応
                                                │

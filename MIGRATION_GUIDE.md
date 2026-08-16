@@ -105,7 +105,7 @@
    * **Key**: `NEXT_PUBLIC_GAS_API_URL`
    * **Value**: ステップ2-2でコピーした新しいGAS WebApp URL（末尾に `?api=data` を付与）
 5. 右下の青いボタン **「Deploy」** をクリックします。
-6. 1〜2分でビルドが完了し、新しい本番URL（例: `https://jmdf-vercel.vercel.app`）でHPが公開されます！
+6. 1〜2分でビルドが完了し、新しい本番URL（例: `https://jmdf-medaka.com`）でHPが公開されます！
 
 ---
 
