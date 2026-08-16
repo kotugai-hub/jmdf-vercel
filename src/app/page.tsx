@@ -27,9 +27,13 @@ export default function Page() {
       process.env.NEXT_PUBLIC_GAS_API_URL ||
       'https://script.google.com/macros/s/AKfycbzVB8bykbviAWu-N0CVzGUBrjIZSFUkbseQGY6xqzQjaJmApUDkm1AKBbaUJ4FQahfmIA/exec?api=data';
 
-    fetch(gasUrl)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 900); // 最大0.9秒待機
+
+    fetch(gasUrl, { signal: controller.signal })
       .then(res => res.json())
       .then(data => {
+        clearTimeout(timeoutId);
         if (data) {
           if (Array.isArray(data.globalNews) && data.globalNews.length > 0) {
             setGlobalNews(data.globalNews);
@@ -49,8 +53,11 @@ export default function Page() {
         }
       })
       .catch(err => {
-        console.log('Background sync error (non-fatal):', err);
+        clearTimeout(timeoutId);
+        console.log('Background sync (0.9s timeout or complete):', err);
       });
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const getLogoUrl = (url: string) => {
