@@ -652,18 +652,6 @@ export default function Page() {
 
                         const role = member.Role || member['Role'] || member['役職・担当'] || member['役職'] || officialRoles[shopName] || '';
 
-                        const isMedaichi =
-                          String(member.MEDAICHI).toUpperCase() === 'TRUE' ||
-                          String(member.MEDAICHI) === '1' ||
-                          String(member.MEDAICHI) === '〇' ||
-                          String(member['メダイチ']) === '〇' ||
-                          String(member['メダイチ']).toUpperCase() === 'TRUE' ||
-                          String(member['MEDAICHI利用']) === '〇' ||
-                          String(member['MEDAICHI利用']).toUpperCase() === 'TRUE';
-
-                        const medaichiRaw = member.MEDAICHI || member['メダイチ'] || member['MEDAICHI利用'] || '';
-                        const medaichiUrl = typeof medaichiRaw === 'string' && medaichiRaw.startsWith('http') ? medaichiRaw : null;
-
                         const links = getShopLinks(shopName, member);
                         const hasAnyLinks = Boolean(
                           links.Website ||
@@ -671,8 +659,7 @@ export default function Page() {
                           links.Instagram2 ||
                           links.Auction ||
                           links.X ||
-                          links.Blog ||
-                          (isMedaichi && links.MEDAICHI && String(links.MEDAICHI) !== '0')
+                          links.Blog
                         );
 
                         return (
@@ -754,33 +741,6 @@ export default function Page() {
                                   )}
                                   {links.Blog && (
                                     <a href={links.Blog} target="_blank" rel="noreferrer" className="sns-link sns-blog" title="Blog"><i className="fa-solid fa-blog"></i></a>
-                                  )}
-                                  {isMedaichi && links.MEDAICHI && (
-                                    <a
-                                      href={medaichiUrl || 'https://note.com/medaichi/n/n0166e73079c3'}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="sns-link sns-medaichi"
-                                      title="MEDAICHI加盟店"
-                                      style={{
-                                        background: 'linear-gradient(135deg, #00b4db 0%, #0083b0 100%)',
-                                        color: '#ffffff',
-                                        padding: '0 14px',
-                                        width: 'auto',
-                                        borderRadius: '20px',
-                                        fontSize: '0.78rem',
-                                        fontWeight: 'bold',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        boxShadow: '0 2px 6px rgba(0, 180, 219, 0.3)',
-                                        textDecoration: 'none',
-                                        height: '38px',
-                                        letterSpacing: '0.5px'
-                                      }}
-                                    >
-                                      MEDAICHI
-                                    </a>
                                   )}
                                 </div>
                               </div>
