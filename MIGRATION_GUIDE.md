@@ -10,7 +10,7 @@
 
 ```
 【ステップ1】新規Googleアカウントの作成
-      │   （例: jmdf.official@gmail.com）
+      │   （例: jmdfmedaka@gmail.com）
       ▼
 【ステップ2】Googleスプレッドシート＆GASのオーナー移管
       │   （データとAPIプログラムの引っ越し）
@@ -33,19 +33,22 @@
 
 1. [Google アカウント作成ページ](https://accounts.google.com/signup) へアクセスします。
 2. アカウント名を設定して作成します。
-   * **メールアドレス例**: `jmdf.official@gmail.com` （または団体独自の代表メールアドレス）
+   * **メールアドレス例**: `jmdfmedaka@gmail.com` （または団体独自の代表メールアドレス）
 3. ※このメールアドレスを使って、以降のGitHubやVercel、Apifyのアカウントも登録します。
 
 ---
 
 ## 🛠️ ステップ2：Googleスプレッドシート＆GASの移管
 
-現在の管理用スプレッドシート（`JMDF_加盟店・ニュース管理`）を新規Googleアカウントへ移管します。
+新規Googleアカウント（`jmdfmedaka@gmail.com`）にて作成済みの新スプレッドシートおよびGoogleドライブフォルダを使用します。
+
+* **新スプレッドシートURL**: https://docs.google.com/spreadsheets/d/1sV0pagqOy2ohxoDUNaipYX3_Rl8yNUiyQK6zLxj-Zfg/edit
+* **新GoogleドライブフォルダURL**: https://drive.google.com/drive/folders/1uBgmvihEU171ZP347qnU3CgiQMJw24nS (ID: `1uBgmvihEU171ZP347qnU3CgiQMJw24nS`)
 
 ### 2-1. スプレッドシートのオーナー権限を譲渡
 1. **現在のアカウント** でGoogleドライブを開きます。
 2. 管理用スプレッドシート（`JMDF_加盟店・ニュース管理`）を開き、右上の **「共有」** ボタンをクリックします。
-3. **新規JMDF Googleアカウント**（例: `jmdf.official@gmail.com`）のメールアドレスを入力し、権限を **「編集者」** として送信します。
+3. **新規JMDF Googleアカウント**（例: `jmdfmedaka@gmail.com`）のメールアドレスを入力し、権限を **「編集者」** として送信します。
 4. 再度「共有」を開き、追加した新規アカウントの右側プルダウンから **「オーナー権限の譲渡」** を選択して完了します。
 
 ### 2-2. 新規アカウントでGAS WebAppを再公開
@@ -54,7 +57,7 @@
 3. 右上の青いボタン **「デプロイ」>「新しいデプロイ」** をクリックします。
 4. 歯車アイコンから **「ウェブアプリ」** を選択し、以下の通り設定します：
    * **説明**: `JMDF API 本番公開`
-   * **次のユーザーとして実行**: **`自分 (jmdf.official@gmail.com)`**
+   * **次のユーザーとして実行**: **`自分 (jmdfmedaka@gmail.com)`**
    * **アクセスできるユーザー**: **`全員`**
 5. **「デプロイ」** をクリックし、アクセス承認画面が出たら「詳細」>「安全ではないページへ移動」をクリックして許可します。
 6. 発行された **「ウェブアプリのURL」** をコピーしてメモしておきます。
