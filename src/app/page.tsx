@@ -164,7 +164,7 @@ export default async function Page() {
           </div>
         </section>
 
-        {/* 会員ロゴスクロール */}
+        {/* 会員ロゴスクロール（一時非表示）
         <div className="logo-marquee-wrapper">
           <div className="logo-marquee">
             {sanjyoLogos.length > 0 && [0, 1].map((loop) => (
@@ -174,7 +174,6 @@ export default async function Page() {
                   return (
                     <a key={`${loop}-${idx}`} href={logo['リンク先'] || '#'} className="logo-item" target={logo['リンク先'] ? '_blank' : '_self'} title={logo['会員名']}>
                       {url ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={url} alt={logo['会員名']} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                       ) : (
                         <span style={{ display: 'inline-block', padding: '10px', color: 'var(--primary-color)', fontWeight: 'bold' }}>{logo['会員名']}</span>
@@ -186,6 +185,7 @@ export default async function Page() {
             ))}
           </div>
         </div>
+        */}
 
         {/* Section 2: 事務局からのお知らせ */}
         <section id="news" className="section news-section">
@@ -392,6 +392,74 @@ export default async function Page() {
         {/* Section 7: 全国の公認加盟店 */}
         <section id="members" className="section members-section bg-light">
           <div className="container">
+            {/* JMDF公式Instagramバナー */}
+            <div style={{ marginBottom: '50px' }}>
+              <a
+                href="https://www.instagram.com/jmdf.medaka/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '20px',
+                  padding: '24px 32px',
+                  background: 'linear-gradient(135deg, #ffffff 0%, #fff2f6 100%)',
+                  border: '2px solid rgba(225, 48, 108, 0.25)',
+                  borderRadius: '20px',
+                  boxShadow: '0 10px 25px rgba(225, 48, 108, 0.08)',
+                  textDecoration: 'none',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <div
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      borderRadius: '16px',
+                      background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      fontSize: '2rem',
+                      boxShadow: '0 4px 12px rgba(225, 48, 108, 0.35)',
+                      flexShrink: 0
+                    }}
+                  >
+                    <i className="fab fa-instagram"></i>
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '1.35rem', fontWeight: 'bold', color: '#1a1a1a' }}>JMDF 公式 Instagram</span>
+                      <span style={{ fontSize: '0.95rem', color: '#e1306c', fontWeight: 'bold', background: '#ffe6ee', padding: '3px 12px', borderRadius: '20px' }}>@jmdf.medaka</span>
+                    </div>
+                    <p style={{ margin: '6px 0 0 0', fontSize: '1rem', color: '#555555', lineHeight: '1.5' }}>
+                      最新の活動や展示会情報、全国の加盟店情報を発信中！
+                    </p>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 28px',
+                    background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                    color: '#ffffff',
+                    fontWeight: 'bold',
+                    fontSize: '1.05rem',
+                    borderRadius: '50px',
+                    boxShadow: '0 4px 15px rgba(225, 48, 108, 0.3)'
+                  }}
+                >
+                  公式Instagramを見る ↗
+                </div>
+              </a>
+            </div>
+
             <h2 className="section-title">全国の公認加盟店</h2>
             <p className="section-lead">厳格な基準をクリアし、誠実な取引をお約束する全国のプロショップです。</p>
 
@@ -446,12 +514,7 @@ export default async function Page() {
                           }
                         }
 
-                        if (logoSrc && logoSrc.includes('drive.google.com')) {
-                          const match = logoSrc.match(/d\/([a-zA-Z0-9_-]+)/);
-                          if (match && match[1]) {
-                            logoSrc = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w500`;
-                          }
-                        }
+                        logoSrc = getLogoUrl(logoSrc);
 
                         const officialRoles: Record<string, string> = {
                           '岡崎葵メダカ': '代表理事',

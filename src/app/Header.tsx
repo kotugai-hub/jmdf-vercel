@@ -82,7 +82,7 @@ export default function Header() {
               fontSize: '1rem'
             }}
           >
-            <span>✉️</span> メールでお問合せ
+            <span>✉️</span> お問合せ
           </a>
         </div>
 
@@ -239,7 +239,7 @@ export default function Header() {
                 boxShadow: '0 8px 20px rgba(0, 151, 167, 0.3)'
               }}
             >
-              ✉️ メールでお問合せ
+              ✉️ お問合せ
             </a>
           </div>
         </div>
