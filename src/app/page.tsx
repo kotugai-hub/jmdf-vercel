@@ -4,19 +4,25 @@ import ActivityThumb from './ActivityThumb';
 import Header from './Header';
 
 async function getData() {
+  const gasUrl =
+    process.env.NEXT_PUBLIC_GAS_API_URL ||
+    'https://script.google.com/macros/s/AKfycbzVB8bykbviAWu-N0CVzGUBrjIZSFUkbseQGY6xqzQjaJmApUDkm1AKBbaUJ4FQahfmIA/exec?api=data';
+
   try {
-    const gasUrl =
-      process.env.NEXT_PUBLIC_GAS_API_URL ||
-      'https://script.google.com/macros/s/AKfycbzVB8bykbviAWu-N0CVzGUBrjIZSFUkbseQGY6xqzQjaJmApUDkm1AKBbaUJ4FQahfmIA/exec?api=data';
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     const res = await fetch(gasUrl, {
-      next: { revalidate: 60 }
+      signal: controller.signal,
+      next: { revalidate: 300 }
     });
+    clearTimeout(timeoutId);
+
     if (!res.ok) throw new Error('Failed to fetch data');
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error(error);
+    console.error('GAS fetch error or timeout:', error);
     return {
       globalNews: [],
       memberNews: [],
@@ -40,6 +46,28 @@ export default async function Page() {
       }
     }
     return url;
+  };
+
+  const resolveLogo = (shopName: string, customUrl?: string): string => {
+    if (customUrl && customUrl.trim()) return getLogoUrl(customUrl);
+    const s = (shopName || '').replace(/[\s（）\(\)・\-_]/g, '').toLowerCase();
+    if (s.includes('岡崎') || s.includes('葵')) return '/logos/logo_okazaki.png';
+    if (s.includes('京めだか') || s.includes('kyomedaka')) return '/logos/logo_kyomedaka.png';
+    if (s.includes('美夜古') || s.includes('都めだか') || s.includes('miyako')) return '/logos/logo_miyako.png';
+    if (s.includes('チョモランマ') || s.includes('chomo')) return '/logos/logo_chomo.png';
+    if (s.includes('エムリンク') || s.includes('mlink')) return '/logos/logo_mlink.png';
+    if (s.includes('桃ちゃん') || s.includes('momo')) return '/logos/logo_momo.png';
+    if (s.includes('ぼっけ') || s.includes('bokkei')) return '/logos/logo_bokkei.png';
+    if (s.includes('リビング') || s.includes('living')) return '/logos/logo_living.jpg';
+    if (s.includes('静めだか') || s.includes('shizuka')) return '/logos/logo_shizuka.jpg';
+    if (s.includes('植木屋') || s.includes('丸ちゃん')) return '/logos/logo_uekiya.jpg';
+    if (s.includes('パズル') || s.includes('puzzle')) return '/logos/logo_puzzlepiece.jpg';
+    if (s.includes('修') || s.includes('nobu')) return '/logos/logo_nobu.jpg';
+    if (s.includes('曼珠沙華') || s.includes('manjushage')) return '/logos/logo_manjushage.jpg';
+    if (s.includes('奥羽') || s.includes('oumedaka')) return '/logos/logo_ou.jpg';
+    if (s.includes('クライム') || s.includes('climb')) return '/logos/logo_climb.jpg';
+    if (s.includes('たかちゃん') || s.includes('takachan')) return '/logos/logo_takachan.jpg';
+    return '';
   };
 
   const getInstagramUsername = (instaUrl: string) => {
@@ -476,35 +504,7 @@ export default async function Page() {
                         const shopName = member.ShopName || member['屋号'] || member['会員名'] || '';
                         const representative = member.Representative || member['代表者'] || '';
 
-                        const knownLogos: Record<string, string> = {
-                          // 正会員
-                          '岡崎葵メダカ': '/logos/logo_okazaki.png',
-                          '京めだか': '/logos/logo_kyomedaka.png',
-                          '美夜古めだか': '/logos/logo_miyako.png',
-                          '都めだか': '/logos/logo_miyako.png',
-                          'メダカチョモランマ': '/logos/logo_chomo.png',
-                          'エムリンク': '/logos/logo_mlink.png',
-                          'M-LINK': '/logos/logo_mlink.png',
-                          '桃ちゃんめだか': '/logos/logo_momo.png',
-                          'ぼっけーめだか': '/logos/logo_bokkei.png',
-                          'ぼっけぇめだか': '/logos/logo_bokkei.png',
-                          'リビングめだか': '/logos/logo_living.jpg',
-                          '静めだか': '/logos/logo_shizuka.jpg',
-
-                          // 準会員・賛助会員
-                          '植木屋丸ちゃんめだか': '/logos/logo_uekiya.jpg',
-                          'パズルピースめだか': '/logos/logo_puzzlepiece.jpg',
-                          '修(nobu)めだか': '/logos/logo_nobu.jpg',
-                          '修（nobu）めだか': '/logos/logo_nobu.jpg',
-                          '修めだか(nobu)': '/logos/logo_nobu.jpg',
-                          '修めだか（nobu）': '/logos/logo_nobu.jpg',
-                          '曼珠沙華めだか': '/logos/logo_manjushage.jpg',
-                          '奥羽めだか': '/logos/logo_ou.jpg',
-                          'クライムメダカ': '/logos/logo_climb.jpg',
-                          'たかちゃん': '/logos/logo_takachan.jpg'
-                        };
-
-                        let logoSrc = member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL'] || knownLogos[shopName] || '';
+                        let logoSrc = resolveLogo(shopName, member.LogoURL || member['ロゴ画像URL'] || member['ロゴURL']);
 
                         if (!logoSrc) {
                           const instaUrl = member.Instagram || member['Instagram'] || member['インスタグラム'] || member['インスタ'] || '';
@@ -513,8 +513,6 @@ export default async function Page() {
                             logoSrc = `https://api.microlink.io/?url=https://www.instagram.com/${username}&embed=image.url`;
                           }
                         }
-
-                        logoSrc = getLogoUrl(logoSrc);
 
                         const officialRoles: Record<string, string> = {
                           '岡崎葵メダカ': '代表理事',
@@ -549,19 +547,34 @@ export default async function Page() {
                           <div key={idx} className="member-card">
                             <div className="member-header">
                               {logoSrc ? (
-                                <div className="member-logo-img" style={{
-                                  backgroundImage: `url(${logoSrc})`,
-                                  backgroundSize: 'contain',
-                                  backgroundRepeat: 'no-repeat',
-                                  backgroundPosition: 'center',
-                                  backgroundColor: '#ffffff',
+                                <div style={{
+                                  width: '100%',
+                                  height: '140px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  background: '#ffffff',
+                                  borderRadius: '12px',
                                   padding: '8px',
-                                  color: 'transparent'
+                                  overflow: 'hidden'
                                 }}>
-                                  {shopName ? shopName.charAt(0) : 'M'}
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={logoSrc}
+                                    alt={shopName}
+                                    style={{
+                                      maxWidth: '100%',
+                                      maxHeight: '100%',
+                                      objectFit: 'contain'
+                                    }}
+                                    loading="lazy"
+                                  />
                                 </div>
                               ) : (
-                                <div className="member-logo-img" style={{
+                                <div style={{
+                                  width: '100%',
+                                  height: '140px',
+                                  borderRadius: '12px',
                                   background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
                                   display: 'flex',
                                   alignItems: 'center',
@@ -569,7 +582,7 @@ export default async function Page() {
                                   color: '#ffffff',
                                   boxShadow: '0 4px 10px rgba(220, 39, 67, 0.3)'
                                 }} title="Instagram アイコン">
-                                  <i className="fa-brands fa-instagram" style={{ fontSize: '1.8rem' }}></i>
+                                  <i className="fa-brands fa-instagram" style={{ fontSize: '2.2rem' }}></i>
                                 </div>
                               )}
                               <div className="member-header-info">
