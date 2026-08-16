@@ -1,40 +1,19 @@
 import React from 'react';
 import galleryImages from './gallery.json';
+import initialData from './initialData.json';
 import ActivityThumb from './ActivityThumb';
 import Header from './Header';
 
-async function getData() {
-  const gasUrl =
-    process.env.NEXT_PUBLIC_GAS_API_URL ||
-    'https://script.google.com/macros/s/AKfycbzVB8bykbviAWu-N0CVzGUBrjIZSFUkbseQGY6xqzQjaJmApUDkm1AKBbaUJ4FQahfmIA/exec?api=data';
+export const dynamic = 'force-static';
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    const res = await fetch(gasUrl, {
-      signal: controller.signal,
-      next: { revalidate: 300 }
-    });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) throw new Error('Failed to fetch data');
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error('GAS fetch error or timeout:', error);
-    return {
-      globalNews: [],
-      memberNews: [],
-      businessPlan: [],
-      members: {},
-      memberLogos: []
-    };
-  }
-}
-
-export default async function Page() {
-  const data = await getData();
+export default function Page() {
+  const data = (initialData || {}) as {
+    globalNews?: Record<string, string>[];
+    memberNews?: Record<string, string>[];
+    businessPlan?: Record<string, string>[];
+    members?: Record<string, Record<string, string>[]>;
+    memberLogos?: Record<string, string>[];
+  };
   const { globalNews = [], memberNews = [], businessPlan = [], members = {}, memberLogos = [] } = data;
 
   const getLogoUrl = (url: string) => {
