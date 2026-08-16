@@ -7,7 +7,7 @@ async function getData() {
   try {
     const gasUrl =
       process.env.NEXT_PUBLIC_GAS_API_URL ||
-      'https://script.google.com/macros/s/AKfycbzhEIxN1dx86YmL8QXAYaG7vSWdrXdcGDV7w0YEFl2hpBW7Me2TQb-q4sm9iafcCEmP/exec?api=data';
+      'https://script.google.com/macros/s/AKfycbzVB8bykbviAWu-N0CVzGUBrjIZSFUkbseQGY6xqzQjaJmApUDkm1AKBbaUJ4FQahfmIA/exec?api=data';
 
     const res = await fetch(gasUrl, {
       next: { revalidate: 60 }
