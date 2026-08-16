@@ -1,20 +1,57 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import galleryImages from './gallery.json';
 import initialData from './initialData.json';
 import ActivityThumb from './ActivityThumb';
 import Header from './Header';
 
-export const dynamic = 'force-static';
-
 export default function Page() {
-  const data = (initialData || {}) as {
+  const initial = (initialData || {}) as {
     globalNews?: Record<string, string>[];
     memberNews?: Record<string, string>[];
     businessPlan?: Record<string, string>[];
     members?: Record<string, Record<string, string>[]>;
     memberLogos?: Record<string, string>[];
   };
-  const { globalNews = [], memberNews = [], businessPlan = [], members = {}, memberLogos = [] } = data;
+
+  const [globalNews, setGlobalNews] = useState<Record<string, string>[]>(initial.globalNews || []);
+  const [memberNews, setMemberNews] = useState<Record<string, string>[]>(initial.memberNews || []);
+  const [businessPlan, setBusinessPlan] = useState<Record<string, string>[]>(initial.businessPlan || []);
+  const [members, setMembers] = useState<Record<string, Record<string, string>[]>>(initial.members || {});
+  const [memberLogos, setMemberLogos] = useState<Record<string, string>[]>(initial.memberLogos || []);
+  const [isBpOpen, setIsBpOpen] = useState(false);
+
+  useEffect(() => {
+    const gasUrl =
+      process.env.NEXT_PUBLIC_GAS_API_URL ||
+      'https://script.google.com/macros/s/AKfycbzVB8bykbviAWu-N0CVzGUBrjIZSFUkbseQGY6xqzQjaJmApUDkm1AKBbaUJ4FQahfmIA/exec?api=data';
+
+    fetch(gasUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          if (Array.isArray(data.globalNews) && data.globalNews.length > 0) {
+            setGlobalNews(data.globalNews);
+          }
+          if (Array.isArray(data.memberNews) && data.memberNews.length > 0) {
+            setMemberNews(data.memberNews);
+          }
+          if (Array.isArray(data.businessPlan) && data.businessPlan.length > 0) {
+            setBusinessPlan(data.businessPlan);
+          }
+          if (data.members && typeof data.members === 'object') {
+            setMembers(data.members);
+          }
+          if (Array.isArray(data.memberLogos)) {
+            setMemberLogos(data.memberLogos);
+          }
+        }
+      })
+      .catch(err => {
+        console.log('Background sync error (non-fatal):', err);
+      });
+  }, []);
 
   const getLogoUrl = (url: string) => {
     if (!url) return '';
@@ -171,29 +208,6 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 会員ロゴスクロール（一時非表示）
-        <div className="logo-marquee-wrapper">
-          <div className="logo-marquee">
-            {sanjyoLogos.length > 0 && [0, 1].map((loop) => (
-              <React.Fragment key={loop}>
-                {sanjyoLogos.map((logo: Record<string, string>, idx: number) => {
-                  const url = getLogoUrl(logo['ロゴURL']);
-                  return (
-                    <a key={`${loop}-${idx}`} href={logo['リンク先'] || '#'} className="logo-item" target={logo['リンク先'] ? '_blank' : '_self'} title={logo['会員名']}>
-                      {url ? (
-                        <img src={url} alt={logo['会員名']} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                      ) : (
-                        <span style={{ display: 'inline-block', padding: '10px', color: 'var(--primary-color)', fontWeight: 'bold' }}>{logo['会員名']}</span>
-                      )}
-                    </a>
-                  );
-                })}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-        */}
-
         {/* Section 2: 事務局からのお知らせ */}
         <section id="news" className="section news-section">
           <div className="container">
@@ -225,42 +239,95 @@ export default function Page() {
         <section className="section medaka-news-section bg-light">
           <div className="container">
             <h2 className="section-title">JMDF 直近の事業計画・スケジュール</h2>
-            <div className="business-plan-list" style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {businessPlan && businessPlan.length > 0 ? (
-                businessPlan.map((bp: Record<string, string>, idx: number) => {
-                  const dateStr = bp.DateStr || bp.Date || '';
-                  const eventName = bp.EventName || bp.Title || '';
-                  const detail = bp.Detail || bp.Category || '';
-                  const location = bp.Location || '';
-                  const linkUrl = bp.LinkURL || bp.URL || '';
+            <p className="section-lead" style={{ marginBottom: '25px' }}>公式出店イベントや直近の活動予定です。</p>
 
-                  const itemContent = (
-                    <>
-                      <div className="bp-date">📅 {dateStr}</div>
-                      <div className="bp-content">
-                        <h3 className="bp-title">{eventName}</h3>
-                        <p className="bp-desc">{detail}</p>
-                      </div>
-                      {location && <div className="bp-location">📍 {location}</div>}
-                    </>
-                  );
+            {!isBpOpen ? (
+              <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsBpOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px',
+                    padding: '16px 36px',
+                    background: 'var(--primary-gradient)',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '50px',
+                    fontSize: '1.2rem',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 25px rgba(0, 151, 167, 0.3)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <span>📅</span> 直近の事業計画・スケジュールを見る（開く ▼）
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginTop: '20px' }}>
+                <div className="business-plan-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  {businessPlan && businessPlan.length > 0 ? (
+                    businessPlan.map((bp: Record<string, string>, idx: number) => {
+                      const dateStr = bp.DateStr || bp.Date || '';
+                      const eventName = bp.EventName || bp.Title || '';
+                      const detail = bp.Detail || bp.Category || '';
+                      const location = bp.Location || '';
+                      const linkUrl = bp.LinkURL || bp.URL || '';
 
-                  return linkUrl ? (
-                    <a key={idx} href={linkUrl} target="_blank" rel="noreferrer" className="business-plan-item" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      {itemContent}
-                    </a>
+                      const itemContent = (
+                        <>
+                          <div className="bp-date">📅 {dateStr}</div>
+                          <div className="bp-content">
+                            <h3 className="bp-title">{eventName}</h3>
+                            <p className="bp-desc">{detail}</p>
+                          </div>
+                          {location && <div className="bp-location">📍 {location}</div>}
+                        </>
+                      );
+
+                      return linkUrl ? (
+                        <a key={idx} href={linkUrl} target="_blank" rel="noreferrer" className="business-plan-item" style={{ textDecoration: 'none', color: 'inherit' }}>
+                          {itemContent}
+                        </a>
+                      ) : (
+                        <div key={idx} className="business-plan-item">
+                          {itemContent}
+                        </div>
+                      );
+                    })
                   ) : (
-                    <div key={idx} className="business-plan-item">
-                      {itemContent}
+                    <div style={{ textAlign: 'center', padding: '30px', background: '#fff', borderRadius: '8px', color: 'var(--text-light)', fontSize: '1.2rem' }}>
+                      現在予定されている直近のスケジュールはありません。
                     </div>
-                  );
-                })
-              ) : (
-                <div style={{ textAlign: 'center', padding: '30px', background: '#fff', borderRadius: '8px', color: 'var(--text-light)', fontSize: '1.2rem' }}>
-                  現在予定されている直近のスケジュールはありません。
+                  )}
                 </div>
-              )}
-            </div>
+                <div style={{ textAlign: 'center', marginTop: '25px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsBpOpen(false)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '12px 30px',
+                      background: '#ffffff',
+                      color: 'var(--primary-color)',
+                      border: '2px solid var(--primary-color)',
+                      borderRadius: '50px',
+                      fontSize: '1.05rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+                    }}
+                  >
+                    ▲ スケジュールを閉じる
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -274,7 +341,7 @@ export default function Page() {
             <div className="activity-marquee">
               {memberNews && memberNews.length > 0 ? [0, 1].map((loop) => (
                 <React.Fragment key={loop}>
-                  {memberNews.slice(0, 15).map((item: Record<string, string>, idx: number) => {
+                  {memberNews.slice(0, 10).map((item: Record<string, string>, idx: number) => {
                     let catClass = 'cat-blog';
                     if (item.Category === '動画') catClass = 'cat-video';
                     if (item.Category === '写真' || item.Category === 'インスタ') catClass = 'cat-photo';
