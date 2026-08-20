@@ -798,7 +798,7 @@ export default function Page() {
 
             <div className="contact-form-wrapper" style={{ textAlign: 'center', padding: '30px' }}>
               <p style={{ fontSize: '1.2rem', marginBottom: '30px' }}>お問い合わせは以下のフォーム、またはお電話にて承っております。</p>
-              <a href="https://forms.gle/zXm9w6T57JvHhL9n9" target="_blank" rel="noreferrer" className="btn-primary" style={{ display: 'inline-block', marginBottom: '20px', padding: '20px 40px', fontSize: '1.3rem', width: '100%', maxWidth: '400px' }}>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLScKQTEwWl1DWC0HpyNXT81Xi4txfx5lsEYnxCNCYKlcK4rIMQ/viewform?usp=dialog" target="_blank" rel="noreferrer" className="btn-primary" style={{ display: 'inline-block', marginBottom: '20px', padding: '20px 40px', fontSize: '1.3rem', width: '100%', maxWidth: '400px' }}>
                 <span className="btn-icon" style={{ marginRight: '10px' }}>✉️</span>お問い合わせフォームへ
               </a>
               <p style={{ marginTop: '20px', color: 'var(--text-light)' }}>※Googleフォームが別タブで開きます</p>
