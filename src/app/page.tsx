@@ -782,7 +782,34 @@ export default function Page() {
             <h2 className="section-title">お問合せ</h2>
             <p className="section-lead">入会のご相談や、イベントへの審査員派遣のご依頼など、こちらからお気軽にご連絡ください。</p>
 
-            <div style={{ maxWidth: '700px', margin: '0 auto 30px', background: 'var(--white)', padding: '30px', borderRadius: '20px', boxShadow: 'var(--box-shadow)', textAlign: 'center' }}>
+            <div className="contact-form-wrapper" style={{ textAlign: 'center', padding: '35px 20px', maxWidth: '700px', margin: '0 auto 30px', background: 'var(--white)', borderRadius: '20px', boxShadow: 'var(--box-shadow)' }}>
+              <p style={{ fontSize: '1.2rem', marginBottom: '25px', color: 'var(--text-color)', fontWeight: '500' }}>
+                お問い合わせは以下のWEBフォーム、またはお電話にて承っております。
+              </p>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLScKQTEwWl1DWC0HpyNXT81Xi4txfx5lsEYnxCNCYKlcK4rIMQ/viewform?usp=dialog"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  padding: '20px 40px',
+                  fontSize: '1.3rem',
+                  width: '100%',
+                  maxWidth: '440px',
+                  boxShadow: '0 8px 25px rgba(0, 151, 167, 0.35)',
+                  textDecoration: 'none'
+                }}
+              >
+                <span>✉️</span> お問い合わせフォームへ ↗
+              </a>
+              <p style={{ marginTop: '15px', fontSize: '0.9rem', color: 'var(--text-light)' }}>※Googleフォームが別タブで開きます</p>
+            </div>
+
+            <div style={{ maxWidth: '700px', margin: '0 auto', background: 'var(--white)', padding: '30px 20px', borderRadius: '20px', boxShadow: 'var(--box-shadow)', textAlign: 'center' }}>
               <h3 style={{ color: 'var(--primary-color)', marginBottom: '20px', fontSize: '1.3rem' }}>お電話でのお問合せ</h3>
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', gap: '20px' }}>
                 <div>
@@ -794,14 +821,6 @@ export default function Page() {
                   <a href="tel:08027190123" style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary-color)', textDecoration: 'none' }}>080-2719-0123</a>
                 </div>
               </div>
-            </div>
-
-            <div className="contact-form-wrapper" style={{ textAlign: 'center', padding: '30px' }}>
-              <p style={{ fontSize: '1.2rem', marginBottom: '30px' }}>お問い合わせは以下のフォーム、またはお電話にて承っております。</p>
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLScKQTEwWl1DWC0HpyNXT81Xi4txfx5lsEYnxCNCYKlcK4rIMQ/viewform?usp=dialog" target="_blank" rel="noreferrer" className="btn-primary" style={{ display: 'inline-block', marginBottom: '20px', padding: '20px 40px', fontSize: '1.3rem', width: '100%', maxWidth: '400px' }}>
-                <span className="btn-icon" style={{ marginRight: '10px' }}>✉️</span>お問い合わせフォームへ
-              </a>
-              <p style={{ marginTop: '20px', color: 'var(--text-light)' }}>※Googleフォームが別タブで開きます</p>
             </div>
           </div>
         </section>
